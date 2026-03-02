@@ -23,9 +23,6 @@ go.work
 .idea
 .vscode
 
-# the executable
-/oidc-cli*
-
 # goreleaser dist directory
 dist/
 
@@ -37,4 +34,6 @@ tmp/
 
 .DS_Store
 
+# the executable
 bin/*
+ocm
