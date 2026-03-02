@@ -29,6 +29,7 @@ type PingFederateClientConfig struct {
 	OidcPolicy                     OIDCPolicy         `json:"oidcPolicy"`
 	ExtendedParameters             ExtendedParameters `json:"extendedParameters"`
 	RefreshRolling                 string             `json:"refreshRolling"`
+	// Other fields are omitted as they are unused in our mapping
 }
 
 type PingFederateClientList struct {
@@ -36,24 +37,35 @@ type PingFederateClientList struct {
 }
 
 type AuthConfig struct {
-	Type   string `json:"type"`
-	Secret string `json:"secret"`
+	Type            string `json:"type"`
+	Secret          string `json:"secret"`
+	EncryptedSecret string `json:"encryptedSecret"`
+	// Other fields are omitted as they are unused in our mapping
 }
 
 type AccessTokenManager struct {
 	Id string `json:"id"`
+	// Other fields are omitted as they are unused in our mapping
 }
 
 type OIDCPolicy struct {
-	LogoutMode             string   `json:"logoutMode"`
-	LogoutURIs             []string `json:"logoutUris"`
-	PostLogoutRedirectURIs []string `json:"postLogoutRedirectURIs"`
+	PolicyGroup            PolicyGroup `json:"policyGroup"`
+	LogoutMode             string      `json:"logoutMode"`
+	LogoutURIs             []string    `json:"logoutUris"`
+	BackChannelLogoutURI   string      `json:"backChannelLogoutUri"`
+	PostLogoutRedirectURIs []string    `json:"postLogoutRedirectURIs"`
+	// Other fields are omitted as they are unused in our mapping
 }
 
+type PolicyGroup struct {
+	Id string `json:"id"`
+	// Other fields are omitted as they are unused in our mapping
+}
 type ExtendedParameters struct {
 	ExcludeTnC  ExtendedParameterValue `json:"exclude_tnc"`
 	Enforce2SV  ExtendedParameterValue `json:"enforce_2sv"`
 	AdapterType ExtendedParameterValue `json:"adapter_type"`
+	// Other fields are omitted as they are unused in our mapping
 }
 
 type ExtendedParameterValue struct {
@@ -101,7 +113,8 @@ func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.Canoni
 			PromptTermsAndConditions: c.mapPromptTermsAndConditions(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
-			PlainSecret: c.mapClientSecret(),
+			PlainSecret:     c.mapPlainSecret(),
+			EncryptedSecret: c.mapEncryptedSecret(),
 		},
 	}
 }
@@ -157,8 +170,18 @@ func (c *PingFederateClientConfig) mapGrantTypes() []string {
 }
 
 func (cc *PingFederateClientConfig) mapTokenEndpointAuthMethod() string {
-	// Not provided by PingFederate API
-	return ""
+	switch cc.ClientAuth.Type {
+	case "NONE":
+		return AuthMethodNone
+	case "CLIENT_SECRET_JWT":
+		return AuthMethodClientSecretJwt
+	case "PRIVATE_KEY_JWT":
+		return AuthMethodPrivateKeyJwt
+	case "CLIENT_SECRET_BASIC":
+		return AuthMethodClientSecretBasic
+	default:
+		return AuthMethodClientSecretBasic
+	}
 }
 
 func (c *PingFederateClientConfig) mapScopes() string {
@@ -170,7 +193,7 @@ func (c *PingFederateClientConfig) mapScopes() string {
 
 func (cc *PingFederateClientConfig) mapBackchannelLogoutURIs() []string {
 	if cc.OidcPolicy.LogoutMode == "BACK_CHANNEL" {
-		return cc.OidcPolicy.LogoutURIs
+		return []string{cc.OidcPolicy.BackChannelLogoutURI}
 	}
 	return nil
 }
@@ -188,9 +211,9 @@ func (cc *PingFederateClientConfig) mapPostLogoutRedirectURIs() []string {
 
 func (c *PingFederateClientConfig) mapClientType() string {
 	if c.ClientAuth.Type == "NONE" {
-		return "public"
+		return ClientTypePublic
 	}
-	return "confidential"
+	return ClientTypeConfidential
 }
 
 func (c *PingFederateClientConfig) mapPKCERequired() bool {
@@ -211,18 +234,16 @@ func (c *PingFederateClientConfig) mapPromptScopeApproval() bool {
 
 func (c *PingFederateClientConfig) mapAccessTokenFormat() string {
 	if strings.HasPrefix(c.DefaultAccessTokenManagerRef.Id, "jwt") {
-		return "jwt"
+		return TokenFormatJwt
 	}
-	return "opaque"
+	return TokenFormatOpaque
 }
 
 func (c *PingFederateClientConfig) mapAccessTokenLifetime() int {
 	if strings.HasSuffix(c.DefaultAccessTokenManagerRef.Id, "long") {
-		// Long-lived access token has a lifetime of 30 minutes
-		return 1800
+		return TokenLifetimeLong
 	}
-	// Short-lived access token has a lifetime of 5 minutes
-	return 300
+	return TokenLifetimeShort
 }
 
 func (cc *PingFederateClientConfig) mapRotateRefreshTokens() bool {
@@ -245,6 +266,10 @@ func (c *PingFederateClientConfig) mapPromptTermsAndConditions() bool {
 	return !contains(c.ExtendedParameters.ExcludeTnC.Value, "true")
 }
 
-func (c *PingFederateClientConfig) mapClientSecret() string {
+func (c *PingFederateClientConfig) mapPlainSecret() string {
 	return c.ClientAuth.Secret
+}
+
+func (c *PingFederateClientConfig) mapEncryptedSecret() string {
+	return c.ClientAuth.EncryptedSecret
 }

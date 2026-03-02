@@ -157,16 +157,16 @@ func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
 	// Map client authenticator type to standard method
 	switch c.ClientAuthenticator {
 	case "client-secret":
-		return "client_secret_basic"
+		return AuthMethodClientSecretBasic
 	case "client-secret-jwt":
-		return "client_secret_jwt"
+		return AuthMethodClientSecretJwt
 	case "client-jwt":
-		return "private_key_jwt"
+		return AuthMethodPrivateKeyJwt
 	default:
 		if c.PublicClient {
-			return "none"
+			return AuthMethodNone
 		}
-		return "client_secret_basic"
+		return AuthMethodClientSecretBasic
 	}
 }
 
@@ -202,9 +202,9 @@ func (c *KeycloakClientConfig) mapPostLogoutRedirectURIs() []string {
 
 func (c *KeycloakClientConfig) mapClientType() string {
 	if c.PublicClient {
-		return "public"
+		return ClientTypePublic
 	}
-	return "confidential"
+	return ClientTypeConfidential
 }
 
 func (c *KeycloakClientConfig) mapPKCERequired() bool {
@@ -234,7 +234,7 @@ func (c *KeycloakClientConfig) mapPromptScopeApproval() bool {
 
 func (c *KeycloakClientConfig) mapAccessTokenFormat() string {
 	// Keycloak issues JWTs by default
-	return "jwt"
+	return TokenFormatJwt
 }
 
 func (c *KeycloakClientConfig) mapAccessTokenLifetime() int {
@@ -242,7 +242,7 @@ func (c *KeycloakClientConfig) mapAccessTokenLifetime() int {
 	if val, ok := strconv.Atoi(c.Attributes["access.token.lifespan"]); ok == nil {
 		return val
 	}
-	return 0
+	return TokenLifetimeDefault
 }
 
 func (c *KeycloakClientConfig) mapRotateRefreshTokens() bool {
