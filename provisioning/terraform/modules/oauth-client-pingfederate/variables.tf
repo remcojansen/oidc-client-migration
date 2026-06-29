@@ -47,7 +47,7 @@ variable "config" {
       refresh_token_lifetime_seconds        = optional(number)
       refresh_token_idle_timeout_seconds    = optional(number)
       rotate_refresh_tokens                 = optional(bool)
-      minimum_acr_value                     = optional(list(string))
+      minimum_acr_value                     = optional(string)
       require_terms_and_conditions_approval = optional(bool)
     }))
 

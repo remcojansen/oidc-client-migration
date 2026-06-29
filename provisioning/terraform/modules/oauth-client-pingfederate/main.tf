@@ -5,17 +5,16 @@
 #
 # The following fields lack a direct PingFederate equivalent and are therefore not currently
 # mapped to PingFederate provider resources:
-# - client.contacts
-# - client.default_acr_values
-# - client.response_types
-# - client.request_uris
-# - client.initiate_login_uri
-# - client.sector_identifier_uri
-# - client.token_endpoint_auth_signing_alg
-# - client.request_object_signing_alg
-# - client.client_uri, 
-# - client.tos_uri 
-# - client.policy_uri 
+# - client.contacts --> Unsupported
+# - client.default_acr_values --> Unsupported
+# - client.request_uris --> Unsupported
+# - client.initiate_login_uri --> Unsupported
+# - client.sector_identifier_uri --> Unsupported
+# - client.token_endpoint_auth_signing_alg --> Unsupported
+# - client.request_object_signing_alg --> Unsupported
+# - client.client_uri --> Unsupported
+# - client.tos_uri --> Unsupported
+# - client.policy_uri --> Unsupported
 
 locals {
   # Define which scopes are "common" and hence available to all clients by default;
@@ -29,11 +28,11 @@ locals {
   grant_type_mapping = {
     "authorization_code"                              = "AUTHORIZATION_CODE"
     "implicit"                                        = "IMPLICIT"
-    "password"                                        = "RESOURCE_OWNER_CREDENTIALS"
+    "password"                                        = "RESOURCE_OWNER_PASSWORD_CREDENTIALS"
     "client_credentials"                              = "CLIENT_CREDENTIALS"
     "refresh_token"                                   = "REFRESH_TOKEN"
     "device_code"                                     = "DEVICE_CODE"
-    "introspection"                                   = "ACCESS_TOKEN_VALIDATION"
+    "introspect"                                      = "ACCESS_TOKEN_VALIDATION"
     "urn:ietf:params:oauth:grant-type:token-exchange" = "TOKEN_EXCHANGE"
   }
 
@@ -54,6 +53,9 @@ locals {
   }
 
   access_token_lifetime_seconds = try(local.extensions.access_token_lifetime_seconds, 300)
+
+  refresh_token_lifetime_minutes = max(1, ceil(try(local.extensions.refresh_token_lifetime_seconds, 0) / 60))
+  refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.refresh_token_idle_timeout_seconds, 0) / 60))
 
   atm_id = lookup(
     lookup(local.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
@@ -94,7 +96,7 @@ resource "pingfederate_oauth_client" "this" {
   }
 
   bypass_approval_page = !try(local.client.consent_required, true)
-  redirect_uris        = append(try(local.client.redirect_uris, []), try(local.client.frontchannel_logout_uri, ""))
+  redirect_uris        = try(local.client.redirect_uris, [])
   grant_types          = local.grant_types
 
   require_proof_key_for_code_exchange   = try(local.extensions.pkce_required, false)
@@ -130,11 +132,11 @@ resource "pingfederate_oauth_client" "this" {
   allow_authentication_api_init           = false
   enable_cookieless_authentication_api    = false
   lockout_max_malicious_actions_type      = "SERVER_DEFAULT"
-  persistent_grant_expiration_time        = try(local.extensions.refresh_token_lifetime_seconds, 0)
-  persistent_grant_expiration_time_unit   = "SECONDS"
+  persistent_grant_expiration_time        = local.refresh_token_lifetime_minutes
+  persistent_grant_expiration_time_unit   = "MINUTES"
   persistent_grant_expiration_type        = try(local.extensions.refresh_token_lifetime_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
-  persistent_grant_idle_timeout           = try(local.extensions.refresh_token_idle_timeout_seconds, 0)
-  persistent_grant_idle_timeout_time_unit = "SECONDS"
+  persistent_grant_idle_timeout           = local.refresh_token_idle_timeout_minutes
+  persistent_grant_idle_timeout_time_unit = "MINUTES"
   persistent_grant_idle_timeout_type      = try(local.extensions.refresh_token_idle_timeout_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
   refresh_rolling                         = try(local.extensions.rotate_refresh_tokens, true) ? "ROLL" : "DONT_ROLL"
   # refresh_token_rolling_grace_period       = 0

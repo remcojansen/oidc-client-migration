@@ -22,13 +22,14 @@ That means:
 - `client` contains the interoperable registration data.
 - `extensions` contains authorization-server policy knobs and implementation-specific settings.
 - `metadata` contains ownership and operational tracking data.
+  In v0.1, metadata is out-of-band and is not provisioned to target authorization servers.
 - `secrets` contains sensitive material that should not be treated as ordinary configuration.
 
 ## Top-Level Structure
 
 | Field | Type | Required | Purpose |
 | --- | --- | --- | --- |
-| `metadata` | object | no | Ownership and source-tracking data. |
+| `metadata` | object | no | Ownership and source-tracking data. Out-of-band only in v0.1 (not provisioned). |
 | `client` | object | yes | Canonical client registration data. |
 | `extensions` | object | no | Server-specific policy and deployment settings. |
 | `secrets` | object | no | Sensitive credentials or encrypted secret material. |
@@ -36,6 +37,8 @@ That means:
 ## Field Reference
 
 ### metadata
+
+Metadata is out-of-band in v0.1. It is retained in canonical files for ownership and governance, but current Terraform modules do not apply metadata to provider resources.
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -132,8 +135,8 @@ The following fields are directly aligned with OAuth 2.0 / OpenID Connect regist
 
 For this model, the `application_type` field is interpreted as follows:
 
-- `web` is assumed to correspond to a public client.
-- `native` is assumed to correspond to a confidential client.
+- `web` is assumed to correspond to a confidential client.
+- `native` is assumed to correspond to a public client.
 
 This is a project-level convention used to normalize source authorization-server data into a single canonical representation.
 

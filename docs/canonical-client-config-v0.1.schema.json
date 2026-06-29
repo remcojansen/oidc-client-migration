@@ -12,7 +12,7 @@
         "metadata": {
             "type": "object",
             "additionalProperties": false,
-            "description": "Optional ownership and source-tracking metadata.",
+            "description": "Optional ownership and source-tracking metadata. In v0.1 this block is out-of-band and is not provisioned by Terraform modules to target authorization servers.",
             "properties": {
                 "owner_email": {
                     "type": "string",

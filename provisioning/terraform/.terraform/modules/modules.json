@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"keycloak-client","Source":"./modules/oauth-client-keycloak","Dir":"modules/oauth-client-keycloak"},{"Key":"pingfederate-client","Source":"./modules/oauth-client-pingfederate","Dir":"modules/oauth-client-pingfederate"}]}

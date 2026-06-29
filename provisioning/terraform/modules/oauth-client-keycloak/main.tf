@@ -5,14 +5,14 @@
 #
 # The following fields lack a direct Keycloak equivalent and are therefore not currently
 # mapped to Keycloak provider resources:
-# - client.contacts
-# - client.response_types
-# - client.initiate_login_uri
-# - client.sector_identifier_uri
-# - client.subject_type
-# - extensions.refresh_token_lifetime_seconds
-# - extensions.refresh_token_idle_timeout_seconds
-# - extensions.access_token_format
+# - client.contacts --> Unsupported
+# - client.response_types --> Unsupported
+# - client.initiate_login_uri --> Unsupported
+# - client.sector_identifier_uri --> Unsupported
+# - client.subject_type --> Unsupported
+# - extensions.refresh_token_lifetime_seconds --> Unsupported
+# - extensions.refresh_token_idle_timeout_seconds --> Unsupported
+# - extensions.access_token_format --> Support for lightweight access tokens intended for later
 
 locals {
   # Define which scopes should be available to all clients by default;
@@ -26,8 +26,8 @@ locals {
   extensions = try(var.config.extensions, {})
   secrets    = try(var.config.secrets, {})
 
-  # Canonical application_type convention: web -> public, native -> confidential
-  access_type = local.client.application_type == "web" ? "PUBLIC" : "CONFIDENTIAL"
+  # Canonical application_type convention: web -> confidential, native -> public 
+  access_type = local.client.application_type == "web" ? "CONFIDENTIAL" : "PUBLIC"
 
   client_authenticator_type = (
     try(local.client.token_endpoint_auth_method, "") == "client_secret_jwt" ? "client-secret-jwt" :
@@ -51,7 +51,7 @@ locals {
       "id.token.signed.response.alg"    = try(local.client.id_token_signed_response_alg, "")
       "token.endpoint.auth.signing.alg" = try(local.client.token_endpoint_auth_signing_alg, "")
       "request.object.signature.alg"    = try(local.client.request_object_signing_alg, "")
-      "minimum.acr.value"               = try(local.client.minimum_acr_value, "")
+      "minimum.acr.value"               = try(local.extensions.minimum_acr_value, "")
       "default.acr.values"              = join(",", try(local.client.default_acr_values, []))
       "logoUri"                         = try(local.client.logo_uri, "")
       "tosUri"                          = try(local.client.tos_uri, "")
@@ -91,18 +91,18 @@ resource "keycloak_openid_client" "this" {
 
   access_token_lifespan = try(local.extensions.access_token_lifetime_seconds, null)
 
-  frontchannel_logout_enabled     = try(local.client.frontchannel_logout_uri, "") == true
+  frontchannel_logout_enabled     = try(local.client.frontchannel_logout_uri, "") != ""
   frontchannel_logout_url         = try(local.client.frontchannel_logout_uri, null)
   valid_post_logout_redirect_uris = try(local.client.post_logout_redirect_uris, [])
 
   # defaults
   admin_url                           = null
-  base_url                            = null
+  root_url                            = null
+  base_url                            = try(local.client.client_uri, null)
   always_display_in_console           = true
   backchannel_logout_session_required = false
   consent_screen_text                 = ""
   login_theme                         = local.login_theme
-  root_url                            = try(local.client.client_uri, null)
   web_origins                         = []
 }
 
@@ -110,7 +110,7 @@ resource "keycloak_openid_client_optional_scopes" "this" {
   realm_id  = var.realm_id
   client_id = keycloak_openid_client.this.id
 
-  optional_scopes = merge(local.default_scopes, local.optional_scopes)
+  optional_scopes = concat(local.default_scopes, local.optional_scopes)
 }
 
 # Create an audience mapping to set the client ID as audience

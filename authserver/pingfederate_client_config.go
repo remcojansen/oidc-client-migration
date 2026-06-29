@@ -388,10 +388,16 @@ func (c *PingFederateClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
 }
 
 func (c *PingFederateClientConfig) mapMinimumACRValue() string {
+	if len(c.ExtendedParameters.Enforce2SV.Value) == 0 {
+		return ""
+	}
 	return c.ExtendedParameters.Enforce2SV.Value[0]
 }
 
 func (c *PingFederateClientConfig) mapRequireTermsAndConditionsApproval() bool {
+	if len(c.ExtendedParameters.ExcludeTnC.Value) == 0 {
+		return false
+	}
 	return !contains(c.ExtendedParameters.ExcludeTnC.Value, "true")
 }
 

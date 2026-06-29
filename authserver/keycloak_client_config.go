@@ -296,7 +296,7 @@ func (c *KeycloakClientConfig) mapPostLogoutRedirectURIs() []string {
 
 func (c *KeycloakClientConfig) mapDefaultACRValues() []string {
 	if val, ok := c.Attributes["default.acr.values"]; ok && val != "" {
-		return strings.Split(val, "##")
+		return strings.Split(val, ",")
 	}
 	return nil
 }
@@ -308,7 +308,7 @@ func (c *KeycloakClientConfig) mapInitiateLoginURI() string {
 
 func (c *KeycloakClientConfig) mapRequestURIs() []string {
 	if val, ok := c.Attributes["request.uris"]; ok && val != "" {
-		return strings.Split(val, "##")
+		return strings.Split(val, ",")
 	}
 	return nil
 }
