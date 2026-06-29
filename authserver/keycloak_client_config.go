@@ -13,28 +13,29 @@ func CreateKeycloakClientConfig() *KeycloakClientConfig {
 
 type KeycloakClientConfig struct {
 	// Basic fields
-	ID                  string `json:"id"`
-	ClientID            string `json:"clientId"`
-	Name                string `json:"name"`
-	Description         string `json:"description"`
-	Enabled             bool   `json:"enabled"`
-	Protocol            string `json:"protocol"`
-	PublicClient        bool   `json:"publicClient"`
-	ClientAuthenticator string `json:"clientAuthenticatorType"`
-	Secret              string `json:"secret"`
+	ID                      string `json:"id"`
+	ClientID                string `json:"clientId"`
+	Name                    string `json:"name"`
+	Description             string `json:"description"`
+	Enabled                 bool   `json:"enabled"`
+	Protocol                string `json:"protocol"`
+	PublicClient            bool   `json:"publicClient"`
+	ClientAuthenticatorType string `json:"clientAuthenticatorType"`
+	Secret                  string `json:"secret"`
+	RootURL                 string `json:"rootUrl"`
+	BaseURL                 string `json:"baseUrl"`
 
 	// OAuth/OIDC flows and URIs
-	RedirectUris           []string `json:"redirectUris"`
-	WebOrigins             []string `json:"webOrigins"`
-	StandardFlowEnabled    bool     `json:"standardFlowEnabled"`
-	ImplicitFlowEnabled    bool     `json:"implicitFlowEnabled"`
-	DirectAccessGrants     bool     `json:"directAccessGrantsEnabled"`
-	ServiceAccountsEnabled bool     `json:"serviceAccountsEnabled"`
+	RedirectUris              []string `json:"redirectUris"`
+	WebOrigins                []string `json:"webOrigins"`
+	StandardFlowEnabled       bool     `json:"standardFlowEnabled"`
+	ImplicitFlowEnabled       bool     `json:"implicitFlowEnabled"`
+	DirectAccessGrantsEnabled bool     `json:"directAccessGrantsEnabled"`
+	ServiceAccountsEnabled    bool     `json:"serviceAccountsEnabled"`
 
 	// OIDC specific
-	UseRefreshTokens   bool `json:"useRefreshTokens"`
 	ConsentRequired    bool `json:"consentRequired"`
-	FrontchannelLogout bool `json:"frontchannelLogoutSessionRequired"`
+	FrontchannelLogout bool `json:"frontchannelLogout"`
 
 	// Security
 	FullScopeAllowed     bool     `json:"fullScopeAllowed"`
@@ -62,34 +63,49 @@ func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalC
 			// Not provided by Keycloak API
 		},
 		Client: oidcconfig.CanonicalClientConfigClient{
-			ClientID:                c.mapClientID(),
-			Name:                    c.mapName(),
-			Description:             c.mapDescription(),
-			RedirectURIs:            c.mapRedirectURIs(),
-			ResponseTypes:           c.mapResponseTypes(),
-			GrantTypes:              c.mapGrantTypes(),
-			TokenEndpointAuthMethod: c.mapTokenEndpointAuthMethod(),
-			Scope:                   c.mapScopes(),
-			BackchannelLogoutURIs:   c.mapBackchannelLogoutURIs(),
-			FrontchannelLogoutURIs:  c.mapFrontchannelLogoutURIs(),
-			PostLogoutRedirectURIs:  c.mapPostLogoutRedirectURIs(),
-			Enabled:                 c.Enabled,
-			ClientType:              c.mapClientType(),
-			PKCERequired:            c.mapPKCERequired(),
-			DPoPRequired:            c.mapDPoPRequired(),
-			PARRequired:             c.mapPARRequired(),
-			PromptScopeApproval:     c.mapPromptScopeApproval(),
-			AccessTokenFormat:       c.mapAccessTokenFormat(),
-			AccessTokenLifetime:     c.mapAccessTokenLifetime(),
-			RotateRefreshTokens:     c.mapRotateRefreshTokens(),
+			ClientID:                    c.mapClientID(),
+			Name:                        c.mapName(),
+			Description:                 c.mapDescription(),
+			Contacts:                    c.mapContacts(),
+			ClientURI:                   c.mapClientURI(),
+			LogoURI:                     c.mapLogoURI(),
+			TosURI:                      c.mapTosURI(),
+			PolicyURI:                   c.mapPolicyURI(),
+			JWKSURI:                     c.mapJWKSURI(),
+			RedirectURIs:                c.mapRedirectURIs(),
+			ResponseTypes:               c.mapResponseTypes(),
+			GrantTypes:                  c.mapGrantTypes(),
+			TokenEndpointAuthMethod:     c.mapTokenEndpointAuthMethod(),
+			TokenEndpointAuthSigningAlg: c.mapTokenEndpointAuthSigningAlg(),
+			IdTokenSignedResponseAlg:    c.mapIdTokenSignedResponseAlg(),
+			RequestObjectSigningAlg:     c.mapRequestObjectSigningAlg(),
+			Scopes:                      c.mapScopes(),
+			ConsentRequired:             c.mapConsentRequired(),
+			ApplicationType:             c.mapApplicationType(),
+			SubjectType:                 c.mapSubjectType(),
+			SectorIdentifierURI:         c.mapSectorIdentifierURI(),
+			BackchannelLogoutURI:        c.mapBackchannelLogoutURI(),
+			FrontchannelLogoutURI:       c.mapFrontchannelLogoutURI(),
+			PostLogoutRedirectURIs:      c.mapPostLogoutRedirectURIs(),
+			DefaultACRValues:            c.mapDefaultACRValues(),
+			InitiateLoginURI:            c.mapInitiateLoginURI(),
+			RequestURIs:                 c.mapRequestURIs(),
 		},
 		Extensions: oidcconfig.CanonicalClientConfigExtensions{
-			SSO:                      c.mapSSO(),
-			Enforce2SV:               c.mapEnforce2SV(),
-			PromptTermsAndConditions: c.mapPromptTermsAndConditions(),
+			Enabled:                           c.mapEnabled(),
+			PKCERequired:                      c.mapPKCERequired(),
+			DPoPRequired:                      c.mapDPoPRequired(),
+			PARRequired:                       c.mapPARRequired(),
+			AccessTokenFormat:                 c.mapAccessTokenFormat(),
+			AccessTokenLifetimeSeconds:        c.mapAccessTokenLifetimeSeconds(),
+			RefreshTokenLifetimeSeconds:       c.mapRefreshTokenLifetimeSeconds(),
+			RefreshTokenIdleTimeoutSeconds:    c.mapRefreshTokenIdleTimeoutSeconds(),
+			RotateRefreshTokens:               c.mapRotateRefreshTokens(),
+			MinimumACRValue:                   c.mapMinimumACRValue(),
+			RequireTermsAndConditionsApproval: c.mapRequireTermsAndConditionsApproval(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
-			PlainSecret: c.mapClientSecret(),
+			PlainSecret: c.mapPlainSecret(),
 		},
 	}
 }
@@ -108,6 +124,43 @@ func (c *KeycloakClientConfig) mapName() string {
 
 func (c *KeycloakClientConfig) mapDescription() string {
 	return c.Description
+}
+
+func (c *KeycloakClientConfig) mapContacts() []string {
+	// Keycloak does not store contacts, returning nil
+	return nil
+}
+
+func (c *KeycloakClientConfig) mapClientURI() string {
+	return c.BaseURL
+}
+
+func (c *KeycloakClientConfig) mapLogoURI() string {
+	if val, ok := c.Attributes["logoUri"]; ok && val != "" {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapTosURI() string {
+	if val, ok := c.Attributes["tosUri"]; ok && val != "" {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapPolicyURI() string {
+	if val, ok := c.Attributes["policyUri"]; ok && val != "" {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapJWKSURI() string {
+	if c.Attributes["use.jwks.url"] == "true" {
+		return c.Attributes["jwks.url"]
+	}
+	return ""
 }
 
 func (c *KeycloakClientConfig) mapRedirectURIs() []string {
@@ -130,32 +183,53 @@ func (c *KeycloakClientConfig) mapGrantTypes() []string {
 	var g []string
 
 	if c.StandardFlowEnabled {
-		g = append(g, "authorization_code")
+		g = append(g, GrantTypeAuthorizationCode)
 	}
 	if c.ImplicitFlowEnabled {
-		g = append(g, "implicit")
+		g = append(g, GrantTypeImplicit)
 	}
-	if c.UseRefreshTokens {
-		g = append(g, "refresh_token")
+	if c.Attributes["use.refresh.tokens"] == "true" {
+		g = append(g, GrantTypeRefreshToken)
 	}
 	if c.ServiceAccountsEnabled {
-		g = append(g, "client_credentials")
+		g = append(g, GrantTypeClientCredentials)
 	}
-	if c.DirectAccessGrants {
-		g = append(g, "password")
+	if c.DirectAccessGrantsEnabled {
+		g = append(g, GrantTypeResourceOwnerPassword)
 	}
 
 	// Check attributes for additional grant types
 	if val, ok := c.Attributes["token.response.type"]; ok && val == "device_code" {
-		g = append(g, "device_code")
+		g = append(g, GrantTypeDeviceCode)
 	}
 
 	return g
 }
 
+func (c *KeycloakClientConfig) mapTokenEndpointAuthSigningAlg() string {
+	if val, ok := c.Attributes["access.token.signed.response.alg"]; ok {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapIdTokenSignedResponseAlg() string {
+	if val, ok := c.Attributes["id.token.signed.response.alg"]; ok {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapRequestObjectSigningAlg() string {
+	if val, ok := c.Attributes["request.object.signature.alg"]; ok {
+		return val
+	}
+	return ""
+}
+
 func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
 	// Map client authenticator type to standard method
-	switch c.ClientAuthenticator {
+	switch c.ClientAuthenticatorType {
 	case "client-secret":
 		return AuthMethodClientSecretBasic
 	case "client-secret-jwt":
@@ -170,27 +244,47 @@ func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
 	}
 }
 
-func (c *KeycloakClientConfig) mapScopes() string {
-	var scopes []string
-	scopes = append(scopes, c.DefaultClientScopes...)
+func (c *KeycloakClientConfig) mapScopes() []string {
+	scopes := append([]string{}, c.DefaultClientScopes...)
 	scopes = append(scopes, c.OptionalClientScopes...)
-	return strings.Join(scopes, ",")
+	return scopes
 }
 
-func (c *KeycloakClientConfig) mapBackchannelLogoutURIs() []string {
-	if val, ok := c.Attributes["backchannel.logout.url"]; ok && val != "" {
-		return strings.Split(val, ",")
+func (c *KeycloakClientConfig) mapConsentRequired() bool {
+	return c.ConsentRequired
+}
+
+func (c *KeycloakClientConfig) mapApplicationType() string {
+	if c.PublicClient {
+		return ApplicationTypeNative
 	}
-	return nil
+	return ApplicationTypeWeb
 }
 
-func (c *KeycloakClientConfig) mapFrontchannelLogoutURIs() []string {
+func (c *KeycloakClientConfig) mapSubjectType() string {
+	// Not available in Keycloak client config, defaulting to "public"
+	return SubjectTypePublic
+}
+
+func (c *KeycloakClientConfig) mapSectorIdentifierURI() string {
+	// Not available in Keycloak client config, returning empty string
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapBackchannelLogoutURI() string {
+	if val, ok := c.Attributes["backchannel.logout.url"]; ok && val != "" {
+		return strings.Split(val, ",")[0]
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapFrontchannelLogoutURI() string {
 	if c.FrontchannelLogout {
 		if val, ok := c.Attributes["frontchannel.logout.url"]; ok && val != "" {
-			return strings.Split(val, ",")
+			return strings.Split(val, ",")[0]
 		}
 	}
-	return nil
+	return ""
 }
 
 func (c *KeycloakClientConfig) mapPostLogoutRedirectURIs() []string {
@@ -200,11 +294,27 @@ func (c *KeycloakClientConfig) mapPostLogoutRedirectURIs() []string {
 	return nil
 }
 
-func (c *KeycloakClientConfig) mapClientType() string {
-	if c.PublicClient {
-		return ClientTypePublic
+func (c *KeycloakClientConfig) mapDefaultACRValues() []string {
+	if val, ok := c.Attributes["default.acr.values"]; ok && val != "" {
+		return strings.Split(val, "##")
 	}
-	return ClientTypeConfidential
+	return nil
+}
+
+func (c *KeycloakClientConfig) mapInitiateLoginURI() string {
+	// Not available in Keycloak client config, returning empty string
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapRequestURIs() []string {
+	if val, ok := c.Attributes["request.uris"]; ok && val != "" {
+		return strings.Split(val, "##")
+	}
+	return nil
+}
+
+func (c *KeycloakClientConfig) mapEnabled() bool {
+	return c.Enabled
 }
 
 func (c *KeycloakClientConfig) mapPKCERequired() bool {
@@ -215,62 +325,65 @@ func (c *KeycloakClientConfig) mapPKCERequired() bool {
 }
 
 func (c *KeycloakClientConfig) mapDPoPRequired() bool {
-	if val, ok := c.Attributes["dpop.required"]; ok {
+	if val, ok := c.Attributes["dpop.bound.access.tokens"]; ok {
 		return val == "true"
 	}
 	return false
 }
 
 func (c *KeycloakClientConfig) mapPARRequired() bool {
-	if val, ok := c.Attributes["par.required"]; ok {
+	if val, ok := c.Attributes["require.pushed.authorization.requests"]; ok {
 		return val == "true"
 	}
 	return false
-}
-
-func (c *KeycloakClientConfig) mapPromptScopeApproval() bool {
-	return c.ConsentRequired
 }
 
 func (c *KeycloakClientConfig) mapAccessTokenFormat() string {
 	// Keycloak issues JWTs by default
-	return TokenFormatJwt
+	return AccessTokenFormatJwt
 }
 
-func (c *KeycloakClientConfig) mapAccessTokenLifetime() int {
+func (c *KeycloakClientConfig) mapAccessTokenLifetimeSeconds() int {
 	// Check attributes for access token lifespan
 	if val, ok := strconv.Atoi(c.Attributes["access.token.lifespan"]); ok == nil {
 		return val
 	}
-	return TokenLifetimeDefault
+	return AccessTokenLifetimeDefault
+}
+
+func (c *KeycloakClientConfig) mapRefreshTokenLifetimeSeconds() int {
+	// Not available in Keycloak client config, returning default
+	return RefreshTokenLifetimeDefault
+}
+
+func (c *KeycloakClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
+	// Not available in Keycloak client config, returning default
+	return RefreshTokenIdleTimeoutDefault
 }
 
 func (c *KeycloakClientConfig) mapRotateRefreshTokens() bool {
-	// Keycloak rotates refresh tokens by default when use_refresh_tokens is enabled
-	return c.UseRefreshTokens
-}
-
-func (c *KeycloakClientConfig) mapSSO() bool {
-	// Keycloak doesn't have a direct SSO flag; check if standard flow is enabled
-	return c.StandardFlowEnabled
-}
-
-func (c *KeycloakClientConfig) mapEnforce2SV() bool {
-	// Check attributes for 2FA requirement
-	if val, ok := c.Attributes["enforce2fa"]; ok {
-		return val == "true"
+	// Not available in Keycloak client config, returning default
+	if val, ok := c.Attributes["use.refresh.tokens"]; ok && val == "true" {
+		return KeycloakRefreshRollingDefault
 	}
 	return false
 }
 
-func (c *KeycloakClientConfig) mapPromptTermsAndConditions() bool {
-	// Check attributes for terms and conditions requirement
+func (c *KeycloakClientConfig) mapMinimumACRValue() string {
+	if val, ok := c.Attributes["minimum.acr.value"]; ok && val != "" {
+		return val
+	}
+	return ""
+}
+
+func (c *KeycloakClientConfig) mapRequireTermsAndConditionsApproval() bool {
+	// Check attributes for terms and conditions requirement.
 	if val, ok := c.Attributes["require-tnc"]; ok {
 		return val == "true"
 	}
 	return false
 }
 
-func (c *KeycloakClientConfig) mapClientSecret() string {
+func (c *KeycloakClientConfig) mapPlainSecret() string {
 	return c.Secret
 }
