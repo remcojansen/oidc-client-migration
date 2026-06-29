@@ -37,3 +37,6 @@ tmp/
 # the executable
 bin/*
 ocm
+
+# the client configurations
+provisioning/client-configurations/*
