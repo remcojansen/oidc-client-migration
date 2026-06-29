@@ -40,3 +40,8 @@ ocm
 
 # the client configurations
 provisioning/client-configurations/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+*.terraform/
