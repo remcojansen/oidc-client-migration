@@ -54,7 +54,7 @@ locals {
 
   access_token_lifetime_seconds = try(local.extensions.access_token_lifetime_seconds, 300)
 
-  refresh_token_lifetime_minutes = max(1, ceil(try(local.extensions.refresh_token_lifetime_seconds, 0) / 60))
+  refresh_token_lifetime_minutes     = max(1, ceil(try(local.extensions.refresh_token_lifetime_seconds, 0) / 60))
   refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.refresh_token_idle_timeout_seconds, 0) / 60))
 
   atm_id = lookup(
