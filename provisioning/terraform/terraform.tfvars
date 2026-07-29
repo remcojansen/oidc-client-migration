@@ -9,7 +9,7 @@ provider_keycloak_tls_skip_verify = true
 
 config_base = "../client-configurations"
 
-keycloak_realm_id = "example"
+keycloak_realm_id = "volvocars"
 
 pingfederate_enabled = false
-keycloak_enabled     = false
+keycloak_enabled     = true

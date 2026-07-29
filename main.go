@@ -14,10 +14,11 @@ const (
 )
 
 func main() {
-	var sourceSystem, outputDir, format string
+	var sourceSystem, outputDir, format, clientId string
 	flag.StringVar(&sourceSystem, "source", "keycloak", "Source system: pingfederate or keycloak")
 	flag.StringVar(&outputDir, "dir", ".", "Directory to save client configuration files")
 	flag.StringVar(&format, "format", "yaml", "Output format: json or yaml")
+	flag.StringVar(&clientId, "client-id", "", "Client ID to fetch (optional)")
 	flag.Parse()
 	if format != "json" && format != "yaml" {
 		fmt.Println("Invalid format. Use 'json' or 'yaml'.")
@@ -42,9 +43,22 @@ func main() {
 		log.Fatalf("Unsupported source system: %s\n", sourceSystem)
 	}
 
-	oauthClients, err := c.FetchClientConfigurations()
-	if err != nil {
-		log.Fatalf("Error fetching oauthClients: %v\n", err)
+	oauthClients := []authserver.OAuthClientConfig{}
+	if clientId != "" {
+		clientConfig, err := c.FetchClientConfigurationByClientId(clientId)
+		if err != nil {
+			log.Fatalf("Error fetching client configuration for %s: %v\n", clientId, err)
+		}
+		if clientConfig == nil {
+			log.Fatalf("Client configuration for %s not found\n", clientId)
+		}
+		oauthClients = append(oauthClients, clientConfig)
+	} else {
+		var err error
+		oauthClients, err = c.FetchClientConfigurations()
+		if err != nil {
+			log.Fatalf("Error fetching oauthClients: %v\n", err)
+		}
 	}
 
 	exitCode := ExitOK

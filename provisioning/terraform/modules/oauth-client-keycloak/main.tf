@@ -17,7 +17,7 @@
 locals {
   # Define which scopes should be available to all clients by default;
   # these scopes will be added to the scopes that are assigned to the client
-  default_scopes = ["acr", "basic", "profile", "openid", "email", "address", "phone"]
+  default_scopes = ["profile", "openid", "email", "address", "phone"]
 
   # Define the login theme to use for all clients
   login_theme = "keycloak"
@@ -25,6 +25,27 @@ locals {
   client     = var.config.client
   extensions = try(var.config.extensions, {})
   secrets    = try(var.config.secrets, {})
+
+  # Normalize nullable list fields so downstream functions like join() never receive null.
+  post_logout_redirect_uris = try(local.client.post_logout_redirect_uris, null) == null ? [] : local.client.post_logout_redirect_uris
+  default_acr_values        = try(local.client.default_acr_values, null) == null ? [] : local.client.default_acr_values
+  request_uris              = try(local.client.request_uris, null) == null ? [] : local.client.request_uris
+  redirect_uris             = try(local.client.redirect_uris, null) == null ? [] : local.client.redirect_uris
+  grant_types               = try(local.client.grant_types, null) == null ? [] : local.client.grant_types
+  optional_scopes           = try(local.client.scopes, null) == null ? [] : local.client.scopes
+
+  # Normalize nullable booleans for use in conditions/provider boolean fields.
+  enabled                    = try(local.extensions.enabled, null) != false
+  consent_required           = try(local.client.consent_required, null) == true
+  par_required               = try(local.extensions.par_required, null) == true
+  dpop_required              = try(local.extensions.dpop_required, null) == true
+  require_tnc                = try(local.extensions.require_terms_and_conditions_approval, null) == true
+  pkce_required             = try(local.extensions.pkce_required, null) == true
+
+  # Normalize nullable strings used in extra_config and URL toggles.
+  frontchannel_logout_uri = try(local.client.frontchannel_logout_uri, null) == null ? "" : local.client.frontchannel_logout_uri
+  backchannel_logout_uri  = try(local.client.backchannel_logout_uri, null) == null ? "" : local.client.backchannel_logout_uri
+  jwks_uri                = try(local.client.jwks_uri, null) == null ? "" : local.client.jwks_uri
 
   # Canonical application_type convention: web -> confidential, native -> public 
   access_type = local.client.application_type == "web" ? "CONFIDENTIAL" : "PUBLIC"
@@ -36,35 +57,28 @@ locals {
     local.access_type == "PUBLIC" ? null : "client-secret"
   )
 
-  # Keycloak splits scopes into default and optional scopes, while the canonical model has one 
-  # scopes list. This mapping writes canonical scopes as optional scopes.
-  optional_scopes = try(local.client.scopes, [])
-
   extra_config = merge(
     {
-      "par.required"                    = tostring(try(local.extensions.par_required, false))
-      "dpop.required"                   = tostring(try(local.extensions.dpop_required, false))
-      "require-tnc"                     = tostring(try(local.extensions.require_terms_and_conditions_approval, false))
-      "post.logout.redirect.uris"       = join(",", try(local.client.post_logout_redirect_uris, []))
-      "backchannel.logout.url"          = try(local.client.backchannel_logout_uri, "")
-      "frontchannel.logout.url"         = try(local.client.frontchannel_logout_uri, "")
+      "par.required"                    = tostring(local.par_required)
+      "dpop.required"                   = tostring(local.dpop_required)
+      "require-tnc"                     = tostring(local.require_tnc)
       "id.token.signed.response.alg"    = try(local.client.id_token_signed_response_alg, "")
       "token.endpoint.auth.signing.alg" = try(local.client.token_endpoint_auth_signing_alg, "")
       "request.object.signature.alg"    = try(local.client.request_object_signing_alg, "")
       "minimum.acr.value"               = try(local.extensions.minimum_acr_value, "")
-      "default.acr.values"              = join(",", try(local.client.default_acr_values, []))
+      "default.acr.values"              = join(",", local.default_acr_values)
       "logoUri"                         = try(local.client.logo_uri, "")
       "tosUri"                          = try(local.client.tos_uri, "")
       "policyUri"                       = try(local.client.policy_uri, "")
-      "jwks.url"                        = try(local.client.jwks_uri, "")
-      "use.jwks.url"                    = try(local.client.jwks_uri, "") != ""
-      "request.uris"                    = join(",", try(local.client.request_uris, []))
+      "jwks.url"                        = local.jwks_uri
+      "use.jwks.url"                    = local.jwks_uri != ""
+      "request.uris"                    = join(",", local.request_uris)
     }
   )
 }
 
 resource "keycloak_openid_client" "this" {
-  enabled     = try(local.extensions.enabled, true)
+  enabled     = local.enabled
   realm_id    = var.realm_id
   client_id   = local.client.client_id
   name        = local.client.client_name
@@ -74,26 +88,27 @@ resource "keycloak_openid_client" "this" {
   access_type               = local.access_type
   client_authenticator_type = local.client_authenticator_type
 
-  consent_required    = try(local.client.consent_required, false)
-  valid_redirect_uris = try(local.client.redirect_uris, [])
+  consent_required    = local.consent_required
+  valid_redirect_uris = local.redirect_uris
 
-  standard_flow_enabled                     = contains(try(local.client.grant_types, []), "authorization_code")
-  implicit_flow_enabled                     = contains(try(local.client.grant_types, []), "implicit")
-  direct_access_grants_enabled              = contains(try(local.client.grant_types, []), "password")
-  service_accounts_enabled                  = contains(try(local.client.grant_types, []), "client_credentials")
-  oauth2_device_authorization_grant_enabled = contains(try(local.client.grant_types, []), "device_code")
-  standard_token_exchange_enabled           = contains(try(local.client.grant_types, []), "urn:ietf:params:oauth:grant-type:token-exchange")
-  use_refresh_tokens                        = contains(try(local.client.grant_types, []), "refresh_token")
+  standard_flow_enabled                     = contains(local.grant_types, "authorization_code")
+  implicit_flow_enabled                     = contains(local.grant_types, "implicit")
+  direct_access_grants_enabled              = contains(local.grant_types, "password")
+  service_accounts_enabled                  = contains(local.grant_types, "client_credentials")
+  oauth2_device_authorization_grant_enabled = contains(local.grant_types, "device_code")
+  standard_token_exchange_enabled           = contains(local.grant_types, "urn:ietf:params:oauth:grant-type:token-exchange")
+  use_refresh_tokens                        = contains(local.grant_types, "refresh_token")
 
-  pkce_code_challenge_method = try(local.extensions.pkce_required, false) ? "S256" : null
+  pkce_code_challenge_method = local.pkce_required ? "S256" : null
 
   extra_config = local.extra_config
 
   access_token_lifespan = try(local.extensions.access_token_lifetime_seconds, null)
 
-  frontchannel_logout_enabled     = try(local.client.frontchannel_logout_uri, "") != ""
-  frontchannel_logout_url         = try(local.client.frontchannel_logout_uri, null)
-  valid_post_logout_redirect_uris = try(local.client.post_logout_redirect_uris, [])
+  frontchannel_logout_enabled     = local.frontchannel_logout_uri != ""
+  frontchannel_logout_url         = local.frontchannel_logout_uri != "" ? local.frontchannel_logout_uri : null
+  backchannel_logout_url          = local.backchannel_logout_uri != "" ? local.backchannel_logout_uri : null
+  valid_post_logout_redirect_uris = local.post_logout_redirect_uris
 
   # defaults
   admin_url                           = null

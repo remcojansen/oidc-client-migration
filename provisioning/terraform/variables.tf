@@ -25,7 +25,7 @@ variable "provider_pingfederate_bypass_external_validation_header" {
 variable "provider_keycloak_url" {
   description = "The url for the keycloak provider"
   type        = string
-  default     = ""
+  default     = "http://localhost:8088"
 }
 
 variable "provider_keycloak_client_id" {
@@ -37,7 +37,19 @@ variable "provider_keycloak_client_id" {
 variable "provider_keycloak_tls_skip_verify" {
   description = "Whether to skip TLS verification for the Keycloak provider"
   type        = bool
-  default     = false
+  default     = true
+}
+
+variable "provider_keycloak_username" {
+  description = "The username for the keycloak provider"
+  type        = string
+  default     = "admin"
+}
+
+variable "provider_keycloak_password" {
+  description = "The password for the keycloak provider"
+  type        = string
+  default     = "admin"
 }
 
 variable "config_base" {

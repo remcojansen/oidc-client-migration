@@ -23,4 +23,6 @@ provider "keycloak" {
   url                      = var.provider_keycloak_url
   client_id                = var.provider_keycloak_client_id
   tls_insecure_skip_verify = var.provider_keycloak_tls_skip_verify
+  username                 = var.provider_keycloak_username
+  password                 = var.provider_keycloak_password
 }

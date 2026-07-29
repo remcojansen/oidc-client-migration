@@ -4,6 +4,7 @@ import "ocm/oidcconfig"
 
 type AuthServerClient interface {
 	FetchClientConfigurations() ([]OAuthClientConfig, error)
+	FetchClientConfigurationByClientId(clientId string) (OAuthClientConfig, error)
 	WithBaseURL(baseURL string) AuthServerClient
 	WithUsernamePassword(username, password string) AuthServerClient
 	WithAccessToken(token string) AuthServerClient

@@ -99,3 +99,36 @@ func (c *KeycloakClient) FetchClientConfigurations() ([]OAuthClientConfig, error
 
 	return oauthClients, nil
 }
+
+func (c *KeycloakClient) FetchClientConfigurationByClientId(clientId string) (OAuthClientConfig, error) {
+	// Keycloak Admin API endpoint for fetching a specific client by ID
+	url := fmt.Sprintf("%s/admin/realms/%s/clients/%s", c.baseURL, c.realm, clientId)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = *c.header
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			fmt.Printf("error closing response body: %v", err)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("keycloak API returned status: %s", resp.Status)
+	}
+
+	var client KeycloakClientConfig
+	if err := json.NewDecoder(resp.Body).Decode(&client); err != nil {
+		return nil, err
+	}
+
+	return &client, nil
+}

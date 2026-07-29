@@ -83,3 +83,34 @@ func (c *PingFederateClient) FetchClientConfigurations() ([]OAuthClientConfig, e
 
 	return oauthClients, nil
 }
+
+func (c *PingFederateClient) FetchClientConfigurationByClientId(clientId string) (OAuthClientConfig, error) {
+	url := fmt.Sprintf("%s/oauth/clients/%s", c.apiURL, clientId)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = *c.header
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			fmt.Printf("error closing response body: %v", err)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("pingFederate API returned status: %s", resp.Status)
+	}
+
+	var client PingFederateClientConfig
+	if err := json.NewDecoder(resp.Body).Decode(&client); err != nil {
+		return nil, err
+	}
+
+	return &client, nil
+}

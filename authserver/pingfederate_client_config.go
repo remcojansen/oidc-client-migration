@@ -69,7 +69,7 @@ type OIDCPolicy struct {
 	LogoutURIs                 []string    `json:"logoutUris"`
 	BackChannelLogoutURI       string      `json:"backChannelLogoutUri"`
 	PostLogoutRedirectURIs     []string    `json:"postLogoutRedirectURIs"`
-	PairwiseIdentifierUserType string      `json:"pairwiseIdentifierUserType"`
+	PairwiseIdentifierUserType bool        `json:"pairwiseIdentifierUserType"`
 	// Other fields are omitted as they are unused in our mapping
 }
 
@@ -283,7 +283,7 @@ func (c *PingFederateClientConfig) mapApplicationType() string {
 }
 
 func (c *PingFederateClientConfig) mapSubjectType() string {
-	if c.OidcPolicy.PairwiseIdentifierUserType == "true" {
+	if c.OidcPolicy.PairwiseIdentifierUserType == true {
 		return SubjectTypePairwise
 	}
 	return SubjectTypePublic
