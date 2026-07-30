@@ -40,6 +40,7 @@ ocm
 
 # the client configurations
 client-configurations/*
+!client-configurations/README.md
 
 # Local .terraform directories
 **/.terraform/*
