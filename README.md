@@ -10,7 +10,29 @@ Currently supported authorization servers: Keycloak and PingFederate.
 ## How it works
 
 ```
-authorization server --export--> client-configurations/ --import--> authorization server
++------------------------------+
+|     Authorization server     |
+|           (source)           |
+|                              |
+|   Keycloak / PingFederate    |
++------------------------------+
+              |
+              | export (export/)
+              v
++------------------------------+
+|    client-configurations/    |
+|                              |
+|   (canonical YAML / JSON)    |
++------------------------------+
+              |
+              | import (import/)
+              v
++------------------------------+
+|     Authorization server     |
+|           (target)           |
+|                              |
+|   Keycloak / PingFederate    |
++------------------------------+
 ```
 
 | Directory | Purpose |
