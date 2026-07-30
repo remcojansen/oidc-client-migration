@@ -3,7 +3,7 @@ package authserver
 import (
 	"encoding/json"
 	"fmt"
-	"ocm/oidcconfig"
+	"ocm/export/oidcconfig"
 	"strings"
 )
 

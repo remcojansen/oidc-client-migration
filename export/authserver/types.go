@@ -1,6 +1,6 @@
 package authserver
 
-import "ocm/oidcconfig"
+import "ocm/export/oidcconfig"
 
 type AuthServerClient interface {
 	FetchClientConfigurations() ([]OAuthClientConfig, error)

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"ocm/authserver"
+	"ocm/export/authserver"
 	"os"
 )
 

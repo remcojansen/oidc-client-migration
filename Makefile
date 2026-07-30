@@ -12,21 +12,21 @@ help:
 	@echo "  coverage - Run tests with coverage report"
 
 build:
-	go build
+	go build -o bin/ocm ./export
 
 install:
-	go install
+	go install ./export
 
 test:
 	go test ./...
-	terraform validate --test-directory provisioning/
+	terraform validate --test-directory import/
 
 run:
-	go run main.go
+	go run ./export
 
 fmt:
 	go fmt ./...
-	terraform fmt --recursive provisioning/
+	terraform fmt --recursive import/
 
 lint:
 	golangci-lint run ./...

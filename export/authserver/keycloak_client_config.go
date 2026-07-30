@@ -2,7 +2,7 @@ package authserver
 
 import (
 	"encoding/json"
-	"ocm/oidcconfig"
+	"ocm/export/oidcconfig"
 	"strconv"
 	"strings"
 )

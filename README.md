@@ -6,6 +6,16 @@ The canonical client model is documented in [docs/canonical-client-config-v0.1.m
 
 The canonical format can be used to provision configurations to the same or a different authorization server by reading from it using an available Terraform provider or a custom client.
 
+## Repository structure
+
+This repository is split into two independent parts:
+
+- [`export/`](export/): the Go tool (`ocm`) that connects to an authorization server and exports client configurations into the canonical format.
+- [`client-configurations/`](client-configurations/): canonical client configuration files. Populated by `export/`, consumed by `import/`. This is the hand-off point between the two.
+- [`import/`](import/): Terraform/OpenTofu definitions that read canonical configurations and provision them into an authorization server. See [import/README.md](import/README.md) for details.
+
+The two tools are connected only by the canonical configuration files: `export/` produces them, `import/` consumes them.
+
 ## Prerequisites
 
 - Go (version 1.16 or later)
@@ -27,7 +37,7 @@ bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
 ``` 
 
 - `-source`: Indicate which authorization server to export configuration from.
-- `-dir`: Specifies the path to the directory containing the client configurations. This should point to the `provisioning/client-configurations/` directory in this repository.
+- `-dir`: Specifies the path to the directory containing the client configurations. This should point to the `client-configurations/` directory in this repository.
 - `-format`: Specifies the output format for the generated files. It can be either `yaml` or `json`.
 
 ## Keycloak
@@ -44,4 +54,4 @@ export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
 
 ## Provisioning client configurations
 
-One way of using the generated canonical configurations is to provision these to an authorization server using Terraform / OpenTofu. The `provisioning/` directory contains example configurations that show how the canonical configuration can be transformed into valid HCL for the supported authorization servers. 
+One way of using the generated canonical configurations is to provision these to an authorization server using Terraform / OpenTofu. The [`import/`](import/) directory contains example configurations that show how the canonical configuration can be transformed into valid HCL for the supported authorization servers.
