@@ -22,7 +22,7 @@ Currently supported authorization servers: Keycloak and PingFederate.
 +------------------------------+
 |    client-configurations/    |
 |                              |
-|   (canonical YAML / JSON)    |
+|      (canonical YAML)        |
 +------------------------------+
               |
               | import (import/)

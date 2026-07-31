@@ -31,7 +31,7 @@ bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
 | --- | --- |
 | `-source` | Which authorization server to export from: `keycloak` or `pingfederate`. Defaults to `keycloak`. |
 | `-dir` | Directory to write the generated canonical configuration files to. This should point to the [`client-configurations/`](../client-configurations/) directory in this repository. |
-| `-format` | Output format: `yaml` or `json`. Defaults to `yaml`. |
+| `-format` | Output format: `yaml` or `json`. Defaults to `yaml`. Note: the Terraform `import/` module currently only reads `.yaml` files from `client-configurations/`, so use `json` only for inspection/tooling purposes outside of this repository's import workflow. |
 | `-client-id` | Optional. Export a single client by its client ID instead of all clients. |
 | `-verbose` | Optional. Print the URL and response status code for each HTTP request made to the authorization server. |
 
