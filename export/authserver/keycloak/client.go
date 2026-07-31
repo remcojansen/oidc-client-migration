@@ -63,6 +63,13 @@ func (c *KeycloakClient) WithBaseURL(baseURL string) authserver.AuthServerClient
 	return c
 }
 
+func (c *KeycloakClient) WithVerbose(verbose bool) authserver.AuthServerClient {
+	if verbose {
+		c.client.Transport = &authserver.VerboseRoundTripper{Transport: c.client.Transport}
+	}
+	return c
+}
+
 func (c *KeycloakClient) FetchClientConfigurations() ([]authserver.OAuthClientConfig, error) {
 	// Keycloak Admin API endpoint for fetching clients
 	url := fmt.Sprintf("%s/admin/realms/%s/clients", c.baseURL, c.realm)

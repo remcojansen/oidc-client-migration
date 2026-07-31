@@ -50,6 +50,13 @@ func (c *PingFederateClient) WithBaseURL(baseURL string) authserver.AuthServerCl
 	return c
 }
 
+func (c *PingFederateClient) WithVerbose(verbose bool) authserver.AuthServerClient {
+	if verbose {
+		c.client.Transport = &authserver.VerboseRoundTripper{Transport: c.client.Transport}
+	}
+	return c
+}
+
 func (c *PingFederateClient) FetchClientConfigurations() ([]authserver.OAuthClientConfig, error) {
 	req, err := http.NewRequest("GET", c.apiURL+"/oauth/clients", nil)
 	if err != nil {

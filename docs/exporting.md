@@ -33,6 +33,7 @@ bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
 | `-dir` | Directory to write the generated canonical configuration files to. This should point to the [`client-configurations/`](../client-configurations/) directory in this repository. |
 | `-format` | Output format: `yaml` or `json`. Defaults to `yaml`. |
 | `-client-id` | Optional. Export a single client by its client ID instead of all clients. |
+| `-verbose` | Optional. Print the URL and response status code for each HTTP request made to the authorization server. |
 
 ## Configuration
 
