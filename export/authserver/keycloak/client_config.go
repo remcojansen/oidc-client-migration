@@ -232,6 +232,13 @@ func (c *KeycloakClientConfig) mapRequestObjectSigningAlg() string {
 }
 
 func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
+	// A public client never authenticates with the token endpoint, regardless of what
+	// clientAuthenticatorType Keycloak reports — Keycloak sets a default of "client-secret"
+	// on virtually every client record, including public ones, where it's simply ignored.
+	if c.PublicClient {
+		return authserver.AuthMethodNone
+	}
+
 	// Map client authenticator type to standard method
 	switch c.ClientAuthenticatorType {
 	case "client-secret":
@@ -241,9 +248,6 @@ func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
 	case "client-jwt":
 		return authserver.AuthMethodPrivateKeyJwt
 	default:
-		if c.PublicClient {
-			return authserver.AuthMethodNone
-		}
 		return authserver.AuthMethodClientSecretBasic
 	}
 }

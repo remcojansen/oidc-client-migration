@@ -67,6 +67,15 @@ func TestMapTokenEndpointAuthMethod_PublicClient(t *testing.T) {
 	}
 }
 
+func TestMapTokenEndpointAuthMethod_PublicClientWithDefaultClientAuthenticatorType(t *testing.T) {
+	// Keycloak sets clientAuthenticatorType to "client-secret" by default on every client,
+	// including public ones, where it is ignored. A public client must still map to "none".
+	cfg := &KeycloakClientConfig{PublicClient: true, ClientAuthenticatorType: "client-secret"}
+	if got := cfg.mapTokenEndpointAuthMethod(); got != authserver.AuthMethodNone {
+		t.Errorf("mapTokenEndpointAuthMethod() = %q, want %q", got, authserver.AuthMethodNone)
+	}
+}
+
 func TestMapAccessTokenFormat_AlwaysJwt(t *testing.T) {
 	cfg := &KeycloakClientConfig{}
 	if got := cfg.mapAccessTokenFormat(); got != authserver.AccessTokenFormatJwt {
