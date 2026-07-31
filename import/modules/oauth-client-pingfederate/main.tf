@@ -43,7 +43,16 @@ locals {
   }
 
   grant_types = [
-    for gt in try(local.client.grant_types, []) : lookup(local.grant_type_mapping, gt, "invalid grant type")
+    for gt in try(local.client.grant_types, []) : lookup(local.grant_type_mapping, gt, local.grant_type_invalid_sentinel)
+  ]
+
+  # Sentinel value used to detect a grant type with no PingFederate equivalent; checked by the
+  # resource's lifecycle.precondition below so the failure surfaces with a clear message instead
+  # of silently provisioning a client with a bogus grant type.
+  grant_type_invalid_sentinel = "invalid grant type"
+
+  unsupported_grant_types = [
+    for gt in try(local.client.grant_types, []) : gt if !contains(keys(local.grant_type_mapping), gt)
   ]
 
   access_token_manager_mapping = {
@@ -66,8 +75,13 @@ locals {
   atm_id = lookup(
     lookup(local.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
     local.access_token_lifetime_seconds,
-    "invalid access token format or lifetime"
+    local.atm_id_invalid_sentinel
   )
+
+  # Sentinel value used to detect an unsupported access_token_format/access_token_lifetime_seconds
+  # combination; checked by the resource's lifecycle.precondition below so the failure surfaces
+  # with a clear message instead of silently provisioning a client with a bogus manager id.
+  atm_id_invalid_sentinel = "invalid access token format or lifetime"
 
   logout_mode = (
     try(local.client.frontchannel_logout_uri, "") != "" ? "OIDC_FRONT_CHANNEL" :
@@ -154,4 +168,15 @@ resource "pingfederate_oauth_client" "this" {
   restrict_to_default_access_token_manager = false
   token_exchange_processor_policy_ref      = null
   validate_using_all_eligible_atms         = true
+
+  lifecycle {
+    precondition {
+      condition     = local.atm_id != local.atm_id_invalid_sentinel
+      error_message = "Unsupported access_token_format/access_token_lifetime_seconds combination: ${try(local.extensions.access_token_format, "jwt")}/${local.access_token_lifetime_seconds}. Supported combinations: ${jsonencode(local.access_token_manager_mapping)}."
+    }
+    precondition {
+      condition     = !contains(local.grant_types, local.grant_type_invalid_sentinel)
+      error_message = "Unsupported grant_types: ${jsonencode(local.unsupported_grant_types)}. Supported grant types: ${jsonencode(keys(local.grant_type_mapping))}."
+    }
+  }
 }
