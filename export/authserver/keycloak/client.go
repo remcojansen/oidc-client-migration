@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"ocm/export/authserver"
 	"strings"
 	"time"
@@ -72,9 +73,26 @@ func (c *KeycloakClient) WithVerbose(verbose bool) authserver.AuthServerClient {
 
 func (c *KeycloakClient) FetchClientConfigurations() ([]authserver.OAuthClientConfig, error) {
 	// Keycloak Admin API endpoint for fetching clients
-	url := fmt.Sprintf("%s/admin/realms/%s/clients", c.baseURL, c.realm)
+	listURL := fmt.Sprintf("%s/admin/realms/%s/clients", c.baseURL, c.realm)
 
-	req, err := http.NewRequest("GET", url, nil)
+	clientList, err := c.fetchClientConfigurationList(listURL)
+	if err != nil {
+		return nil, err
+	}
+
+	oauthClients := make([]authserver.OAuthClientConfig, len(clientList))
+	for i := range clientList {
+		oauthClients[i] = &clientList[i]
+	}
+
+	return oauthClients, nil
+}
+
+// fetchClientConfigurationList issues a GET request against the given clients collection URL
+// (e.g. the full clients listing, or a clientId-filtered lookup) and decodes the response into
+// a list of client representations.
+func (c *KeycloakClient) fetchClientConfigurationList(listURL string) ([]KeycloakClientConfig, error) {
+	req, err := http.NewRequest("GET", listURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -100,43 +118,27 @@ func (c *KeycloakClient) FetchClientConfigurations() ([]authserver.OAuthClientCo
 		return nil, err
 	}
 
-	oauthClients := make([]authserver.OAuthClientConfig, len(clientList))
-	for i := range clientList {
-		oauthClients[i] = &clientList[i]
-	}
-
-	return oauthClients, nil
+	return clientList, nil
 }
 
 func (c *KeycloakClient) FetchClientConfigurationByClientId(clientId string) (authserver.OAuthClientConfig, error) {
-	// Keycloak Admin API endpoint for fetching a specific client by ID
-	url := fmt.Sprintf("%s/admin/realms/%s/clients/%s", c.baseURL, c.realm, clientId)
+	// Keycloak's single-client resource is addressed by an internal UUID, not the external
+	// clientId configured on the client. Use the clients collection endpoint's clientId filter
+	// instead, which does an exact-match lookup (when the "search" parameter is left
+	// unset/false) and already returns the full client representation, so no further request
+	// is needed.
+	lookupURL := fmt.Sprintf("%s/admin/realms/%s/clients?clientId=%s", c.baseURL, c.realm, url.QueryEscape(clientId))
 
-	req, err := http.NewRequest("GET", url, nil)
+	matches, err := c.fetchClientConfigurationList(lookupURL)
 	if err != nil {
 		return nil, err
 	}
-	req.Header = *c.header
 
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("error closing response body: %v", err)
+	for i := range matches {
+		if matches[i].ClientID == clientId {
+			return &matches[i], nil
 		}
-	}()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("keycloak API returned status: %s", resp.Status)
 	}
 
-	var client KeycloakClientConfig
-	if err := json.NewDecoder(resp.Body).Decode(&client); err != nil {
-		return nil, err
-	}
-
-	return &client, nil
+	return nil, nil
 }
