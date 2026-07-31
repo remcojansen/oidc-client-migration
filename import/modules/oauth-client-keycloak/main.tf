@@ -87,7 +87,7 @@ locals {
       "tosUri"                          = try(local.client.tos_uri, "")
       "policyUri"                       = try(local.client.policy_uri, "")
       "jwks.url"                        = local.jwks_uri
-      "use.jwks.url"                    = local.jwks_uri != ""
+      "use.jwks.url"                    = tostring(local.jwks_uri != "")
       "request.uris"                    = join(",", local.request_uris)
     }
   )
