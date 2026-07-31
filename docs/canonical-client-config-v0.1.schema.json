@@ -229,15 +229,25 @@
                     "minimum": 0,
                     "description": "Access token lifetime in seconds."
                 },
-                "refresh_token_lifetime_seconds": {
+                "offline_session_max_lifetime_seconds": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Refresh token lifetime in seconds."
+                    "description": "Maximum lifetime, in seconds, of a persistent/offline refresh token that must remain usable independently of any browser SSO session (e.g. for native/mobile apps, or backend services refreshing tokens unattended)."
                 },
-                "refresh_token_idle_timeout_seconds": {
+                "offline_session_idle_timeout_seconds": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Refresh token idle timeout in seconds. If the refresh token is not used within this time, it will expire."
+                    "description": "Idle timeout, in seconds, of a persistent/offline refresh token. If the refresh token is not used within this time, it will expire."
+                },
+                "session_max_lifetime_seconds": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Maximum lifetime, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent — PingFederate refresh tokens are always persistent grants, not session-bound."
+                },
+                "session_idle_timeout_seconds": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent."
                 },
                 "rotate_refresh_tokens": {
                     "type": "boolean",
