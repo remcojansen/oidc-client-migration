@@ -12,6 +12,7 @@
 # - client.subject_type --> Unsupported
 # - extensions.refresh_token_lifetime_seconds --> Unsupported
 # - extensions.refresh_token_idle_timeout_seconds --> Unsupported
+# - extensions.rotate_refresh_tokens --> Unsupported
 # - extensions.access_token_format --> Support for lightweight access tokens intended for later
 
 locals {

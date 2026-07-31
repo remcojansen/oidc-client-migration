@@ -15,6 +15,8 @@
 # - client.client_uri --> Unsupported
 # - client.tos_uri --> Unsupported
 # - client.policy_uri --> Unsupported
+# - client.response_types --> Unsupported (client type is derived from grant_types instead)
+# - client.application_type --> Unsupported (client type is derived from token_endpoint_auth_method instead)
 
 locals {
   # Define which scopes are "common" and hence available to all clients by default;

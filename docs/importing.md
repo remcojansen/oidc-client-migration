@@ -70,7 +70,6 @@ terraform apply
 
 ## Feature support
 
-Not every canonical field has a direct equivalent on every target system. See the comments at the
-top of each module's `main.tf` (e.g.
-[`modules/oauth-client-pingfederate/main.tf`](../import/modules/oauth-client-pingfederate/main.tf))
-for the fields that are currently unsupported on that target.
+Not every canonical field has a direct equivalent on every target system. See
+[capabilities.md](capabilities.md) for the full field support matrix across both export and
+import, for both Keycloak and PingFederate.

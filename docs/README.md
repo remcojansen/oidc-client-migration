@@ -9,3 +9,5 @@
   provision canonical client configurations into an authorization server.
 - [configuration.md](configuration.md): single reference for every environment variable and
   Terraform variable used by the export tool and the Terraform import.
+- [capabilities.md](capabilities.md): field support matrix showing which canonical fields are
+  supported by Keycloak and PingFederate, on export and on import.
