@@ -31,7 +31,7 @@ to `import/terraform.tfvars` (gitignored) as a starting point.
 | --- | --- | --- | --- | --- |
 | Admin API URL | `provider_pingfederate_url` | `PINGFEDERATE_PROVIDER_HTTPS_HOST` | Yes | HTTPS URL for the PingFederate admin API. Leave the Terraform variable unset (default `null`) to use the environment variable instead. |
 | Product version | `provider_pingfederate_product_version` | `PINGFEDERATE_PROVIDER_PRODUCT_VERSION` | Yes | PingFederate server version being configured. Leave the Terraform variable unset (default `null`) to use the environment variable instead. |
-| Skip TLS verification | `provider_pingfederate_tls_skip_verify` | `PINGFEDERATE_PROVIDER_INSECURE_TRUST_ALL_TLS` | No (default `true`; falls back to the provider's own default if both the variable and environment variable are unset) | Trust any TLS certificate when connecting. |
+| Skip TLS verification | `provider_pingfederate_tls_skip_verify` | `PINGFEDERATE_PROVIDER_INSECURE_TRUST_ALL_TLS` | No (default `false`) | Trust any TLS certificate when connecting. |
 | Bypass external validation header | `provider_pingfederate_bypass_external_validation_header` | `PINGFEDERATE_PROVIDER_X_BYPASS_EXTERNAL_VALIDATION_HEADER` | No (default `true`; falls back to the provider's own default if both the variable and environment variable are unset) | Sets the `X-BypassExternalValidation` admin API header. |
 | Username | — | `PINGFEDERATE_PROVIDER_USERNAME` | Yes | Username for the PingFederate admin API. Not wired to a Terraform variable — set directly as an environment variable. |
 | Password | — | `PINGFEDERATE_PROVIDER_PASSWORD` | Yes | Password for the PingFederate admin API. Not wired to a Terraform variable — set directly as an environment variable. |
