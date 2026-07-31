@@ -1,0 +1,67 @@
+# Exporting client configurations
+
+The `export/` directory contains a Go command-line tool (`ocm` — OIDC Client Migration) that connects to an
+authorization server, reads its OIDC/OAuth2 client configurations, and writes them out in the
+[canonical client configuration format](canonical-client-config-v0.1.md) as YAML or JSON files.
+
+Supported source systems:
+
+- Keycloak
+- PingFederate
+
+## Prerequisites
+
+- Go (version 1.26 or later, matching the `go` directive in [go.mod](../go.mod))
+
+## Build
+
+```bash
+make build
+```
+
+This produces the binary at `bin/ocm`.
+
+## Usage
+
+```bash
+bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
+```
+
+| Flag | Description |
+| --- | --- |
+| `-source` | Which authorization server to export from: `keycloak` or `pingfederate`. Defaults to `keycloak`. |
+| `-dir` | Directory to write the generated canonical configuration files to. This should point to the [`client-configurations/`](../client-configurations/) directory in this repository. |
+| `-format` | Output format: `yaml` or `json`. Defaults to `yaml`. Note: the Terraform `import/` module currently only reads `.yaml` files from `client-configurations/`, so use `json` only for inspection/tooling purposes outside of this repository's import workflow. |
+| `-client-id` | Optional. Export a single client by its client ID instead of all clients. |
+| `-verbose` | Optional. Print the URL and response status code for each HTTP request made to the authorization server. |
+
+## Configuration
+
+The tool is configured entirely through environment variables, since these typically hold
+credentials that shouldn't be passed as command-line flags or committed to a config file. See the
+[configuration reference](configuration.md#export-tool-export-go) for the full list of variables.
+
+Set `AUTH_SERVER_BASE_URL` to the base URL of the authorization server's admin API. This is
+required for both Keycloak and PingFederate.
+
+### Keycloak
+
+Keycloak requires obtaining an access token to consume the admin API. You can run the following
+command to fetch a token and set the `AUTH_SERVER_ACCESS_TOKEN` environment variable:
+
+```bash
+export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
+     -d "username=<username>" \
+     -d "password=<password>" \
+     -d "grant_type=password" \
+     "https://<hostname>/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+```
+
+### PingFederate
+
+Set `AUTH_SERVER_USERNAME` and `AUTH_SERVER_PASSWORD` for the PingFederate admin API.
+
+## Next step
+
+Once configurations are exported to `client-configurations/`, use the
+[Terraform definitions in `import/`](importing.md) to provision them into an authorization server.

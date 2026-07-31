@@ -1,0 +1,19 @@
+# Copy this file to terraform.tfvars and fill in the values for your environment.
+# terraform.tfvars is gitignored and must never be committed, since it typically contains
+# environment-specific and sensitive values.
+
+provider_pingfederate_url                               = ""
+provider_pingfederate_product_version                   = ""
+provider_pingfederate_tls_skip_verify                   = false
+provider_pingfederate_bypass_external_validation_header = false
+
+provider_keycloak_url             = ""
+provider_keycloak_client_id       = ""
+provider_keycloak_tls_skip_verify = false
+
+config_base = "../client-configurations"
+
+keycloak_realm_id = ""
+
+pingfederate_enabled = false
+keycloak_enabled     = false

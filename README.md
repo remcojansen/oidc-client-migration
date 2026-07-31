@@ -1,37 +1,69 @@
 # Client Migration tool
 
-This tool helps you export OIDC or oAuth2 client configurations from an existing authorization server and store the configurations in a canonical, system-agnostic format.
+This project helps you move OIDC/OAuth2 client configurations between authorization servers. It
+exports client configurations from an existing authorization server into a canonical,
+system-agnostic format, which can then be provisioned into the same or a different authorization
+server.
 
-The canonical format can be used to provision configurations to the same or a different authorization server by reading from it using an available Terraform provider or a custom client.
+Currently supported authorization servers: Keycloak and PingFederate.
 
-## Prerequisites
-- Go (version 1.16 or later)
+## How it works
 
-## Build
-To build the tool, run the following command in the current directory:
-
-```bash
-make build
+```
++------------------------------+
+|     Authorization server     |
+|           (source)           |
+|                              |
+|   Keycloak / PingFederate    |
++------------------------------+
+              |
+              | export (export/)
+              v
++------------------------------+
+|    client-configurations/    |
+|                              |
+|      (canonical YAML)        |
++------------------------------+
+              |
+              | import (import/)
+              v
++------------------------------+
+|     Authorization server     |
+|           (target)           |
+|                              |
+|   Keycloak / PingFederate    |
++------------------------------+
 ```
 
-## Usage
-Run the tool with the following command:
+| Directory | Purpose |
+| --- | --- |
+| [`export/`](export/) | Go tool (`ocm` — OIDC Client Migration) that exports client configurations from an authorization server into the canonical format. |
+| [`client-configurations/`](client-configurations/) | Canonical client configuration files: written by `export/`, read by `import/`. |
+| [`import/`](import/) | Terraform/OpenTofu definitions that provision canonical client configurations into an authorization server. |
+
+## Documentation
+
+- [docs/exporting.md](docs/exporting.md): building and running the export tool.
+- [docs/importing.md](docs/importing.md): configuring and running the Terraform import.
+- [docs/configuration.md](docs/configuration.md): single reference for every environment variable
+  and Terraform variable used by the export tool and the Terraform import.
+- [docs/capabilities.md](docs/capabilities.md): field support matrix showing which canonical
+  fields are supported by Keycloak and PingFederate, on export and on import.
+- [docs/canonical-client-config-v0.1.md](docs/canonical-client-config-v0.1.md) /
+  [docs/canonical-client-config-v0.1.schema.json](docs/canonical-client-config-v0.1.schema.json):
+  the canonical client configuration model shared by both.
+
+## Quick start
 
 ```bash
-bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
-``` 
+# 1. Build the export tool
+make build
 
-- `-source`: Indicate which authorization server to export configuration from.
-- `-dir`: Specifies the path to the directory containing the client configurations. This should point to the `configurations/` directory in this repository.
-- `-format`: Specifies the output format for the generated files. It can be either `yaml` or `json`.
+# 2. Export client configurations from Keycloak (see docs/exporting.md for credentials setup)
+bin/ocm -source keycloak -dir client-configurations -format yaml
 
-## Keycloak
-Keycloak requires obtaining an access token to consume the admin API. You can run the following command to fetch a token and set the respective environment variable:
-
-```bash
-export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
-     -d "username=<username>" \
-     -d "password=<password>" \
-     -d "grant_type=password" \
-     "https://<hostname>/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+# 3. Provision the exported configurations into a target authorization server (see docs/importing.md)
+cd import
+terraform init
+terraform apply
 ```
