@@ -11,7 +11,7 @@ Supported source systems:
 
 ## Prerequisites
 
-- Go (version 1.16 or later)
+- Go (version 1.26 or later, matching the `go` directive in [go.mod](../go.mod))
 
 ## Build
 
