@@ -211,7 +211,7 @@ func (c *KeycloakClientConfig) mapGrantTypes() []string {
 }
 
 func (c *KeycloakClientConfig) mapTokenEndpointAuthSigningAlg() string {
-	if val, ok := c.Attributes["access.token.signed.response.alg"]; ok {
+	if val, ok := c.Attributes["token.endpoint.auth.signing.alg"]; ok {
 		return val
 	}
 	return ""
