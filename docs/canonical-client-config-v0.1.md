@@ -1,6 +1,6 @@
 # Canonical OIDC Client Configuration v0.1
 
-This document describes the canonical client configuration model implemented in [oidcconfig/client_config.go](../oidcconfig/client_config.go).
+This document describes the canonical client configuration model implemented in [oidcconfig/client_config.go](../export/oidcconfig/client_config.go).
 
 The goal of the model is to capture enough information to:
 
