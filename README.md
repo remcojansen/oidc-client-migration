@@ -37,7 +37,7 @@ Currently supported authorization servers: Keycloak and PingFederate.
 
 | Directory | Purpose |
 | --- | --- |
-| [`export/`](export/) | Go tool (`ocm`) that exports client configurations from an authorization server into the canonical format. |
+| [`export/`](export/) | Go tool (`ocm` — OIDC Client Migration) that exports client configurations from an authorization server into the canonical format. |
 | [`client-configurations/`](client-configurations/) | Canonical client configuration files: written by `export/`, read by `import/`. |
 | [`import/`](import/) | Terraform/OpenTofu definitions that provision canonical client configurations into an authorization server. |
 

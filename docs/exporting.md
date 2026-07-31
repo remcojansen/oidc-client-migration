@@ -1,6 +1,6 @@
 # Exporting client configurations
 
-The `export/` directory contains a Go command-line tool (`ocm`) that connects to an
+The `export/` directory contains a Go command-line tool (`ocm` — OIDC Client Migration) that connects to an
 authorization server, reads its OIDC/OAuth2 client configurations, and writes them out in the
 [canonical client configuration format](canonical-client-config-v0.1.md) as YAML or JSON files.
 
