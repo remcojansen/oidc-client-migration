@@ -203,7 +203,7 @@ func (c *KeycloakClientConfig) mapGrantTypes() []string {
 	}
 
 	// Check attributes for additional grant types
-	if val, ok := c.Attributes["token.response.type"]; ok && val == "device_code" {
+	if c.Attributes["oauth2.device.authorization.grant.enabled"] == "true" {
 		g = append(g, authserver.GrantTypeDeviceCode)
 	}
 

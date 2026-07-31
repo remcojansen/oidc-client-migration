@@ -73,3 +73,28 @@ func TestMapAccessTokenFormat_AlwaysJwt(t *testing.T) {
 		t.Errorf("mapAccessTokenFormat() = %q, want %q (Keycloak always issues JWTs)", got, authserver.AccessTokenFormatJwt)
 	}
 }
+
+func TestMapGrantTypes_DeviceCode(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"oauth2.device.authorization.grant.enabled": "true",
+		},
+	}
+	got := cfg.mapGrantTypes()
+	want := []string{authserver.GrantTypeDeviceCode}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("mapGrantTypes() = %v, want %v", got, want)
+	}
+}
+
+func TestMapGrantTypes_DeviceCodeNotEnabled(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"oauth2.device.authorization.grant.enabled": "false",
+		},
+	}
+	got := cfg.mapGrantTypes()
+	if len(got) != 0 {
+		t.Errorf("mapGrantTypes() = %v, want empty", got)
+	}
+}
