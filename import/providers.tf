@@ -3,7 +3,7 @@ terraform {
   required_providers {
     pingfederate = {
       source  = "pingidentity/pingfederate"
-      version = ">= 1.8, < 2.0"
+      version = ">= 1.9, < 2.0"
     }
     keycloak = {
       source  = "keycloak/keycloak"
