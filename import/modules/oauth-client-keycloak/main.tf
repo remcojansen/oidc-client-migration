@@ -60,8 +60,11 @@ locals {
   session_max_lifetime_seconds = try(local.extensions.session_max_lifetime_seconds, null)
   session_idle_timeout_seconds = try(local.extensions.session_idle_timeout_seconds, null)
 
-  # Canonical application_type convention: web -> confidential, native -> public 
-  access_type = local.client.application_type == "web" ? "CONFIDENTIAL" : "PUBLIC"
+  # Canonical application_type convention: native -> public, anything else (including unset,
+  # which defaults to web) -> confidential. Defaulting to confidential is the safer choice,
+  # since application_type is optional and a missing value should not silently downgrade an
+  # intended confidential client to public.
+  access_type = try(local.client.application_type, "") == "native" ? "PUBLIC" : "CONFIDENTIAL"
 
   client_authenticator_type = (
     try(local.client.token_endpoint_auth_method, "") == "client_secret_jwt" ? "client-secret-jwt" :

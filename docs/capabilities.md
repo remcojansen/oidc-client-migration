@@ -43,7 +43,7 @@ They only round-trip through canonical files if set by hand.
 | `request_object_signing_alg` | ✅ | ✅ | ❌ | ❌ |
 | `scopes` | ✅ | ✅ | ✅ | ✅ |
 | `consent_required` | ✅ | ✅ | ✅ [3] | ✅ [3] |
-| `application_type` | ~ [4] | ✅ | ~ [4] | ❌ [2] |
+| `application_type` | ~ [4] | ✅ [12] | ~ [4] | ❌ [2] |
 | `subject_type` | ❌ [5] | ❌ | ✅ | ✅ |
 | `sector_identifier_uri` | ❌ | ❌ | ❌ | ❌ |
 | `backchannel_logout_uri` | ✅ | ✅ | ✅ | ✅ |
@@ -110,3 +110,7 @@ They only round-trip through canonical files if set by hand.
     PingFederate has no concept of a refresh token lifetime that is distinct from its persistent
     grant settings, so these fields have no PingFederate equivalent and are not read/applied by
     the PingFederate export/import.
+12. **`application_type` (Keycloak import)**: since the field is optional in the canonical model,
+    `access_type` defaults to `CONFIDENTIAL` unless `application_type` is explicitly `native`, to
+    avoid accidentally provisioning an intended confidential client as public when the field is
+    left unset.
