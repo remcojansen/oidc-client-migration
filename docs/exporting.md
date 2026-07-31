@@ -40,6 +40,9 @@ The tool is configured entirely through environment variables, since these typic
 credentials that shouldn't be passed as command-line flags or committed to a config file. See the
 [configuration reference](configuration.md#export-tool-export-go) for the full list of variables.
 
+Set `AUTH_SERVER_BASE_URL` to the base URL of the authorization server's admin API. This is
+required for both Keycloak and PingFederate.
+
 ### Keycloak
 
 Keycloak requires obtaining an access token to consume the admin API. You can run the following
