@@ -1,4 +1,4 @@
-.PHONY: build test run fmt lint clean help
+.PHONY: build install test run fmt lint clean help
 
 help:
 	@echo "Available targets:"
@@ -15,18 +15,20 @@ build:
 	go build -o bin/ocm ./export
 
 install:
-	go install ./export
+	@GOBIN_DIR="$$(go env GOBIN)"; \
+	if [ -z "$$GOBIN_DIR" ]; then GOBIN_DIR="$$(go env GOPATH)/bin"; fi; \
+	go build -o "$$GOBIN_DIR/ocm" ./export
 
 test:
 	go test ./...
-	terraform validate --test-directory import/
+	terraform -chdir=import validate
 
 run:
 	go run ./export
 
 fmt:
 	go fmt ./...
-	terraform fmt --recursive import/
+	terraform fmt -recursive import/
 
 lint:
 	golangci-lint run ./...
