@@ -7,3 +7,5 @@
   configurations from an authorization server into the canonical format.
 - [importing.md](importing.md): how to use the Terraform definitions in [`import/`](../import/) to
   provision canonical client configurations into an authorization server.
+- [configuration.md](configuration.md): single reference for every environment variable and
+  Terraform variable used by the export tool and the Terraform import.

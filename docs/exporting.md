@@ -37,18 +37,13 @@ bin/ocm -source <auth-server> -dir <path-to-configurations> -format <yaml|json>
 ## Configuration
 
 The tool is configured entirely through environment variables, since these typically hold
-credentials that shouldn't be passed as command-line flags or committed to a config file.
-
-Both source systems require:
-
-- `AUTH_SERVER_BASE_URL`: Base URL of the authorization server's admin API.
+credentials that shouldn't be passed as command-line flags or committed to a config file. See the
+[configuration reference](configuration.md#export-tool-export-go) for the full list of variables.
 
 ### Keycloak
 
-- `AUTH_SERVER_ACCESS_TOKEN`: A valid access token for the Keycloak admin API.
-
 Keycloak requires obtaining an access token to consume the admin API. You can run the following
-command to fetch a token and set the environment variable:
+command to fetch a token and set the `AUTH_SERVER_ACCESS_TOKEN` environment variable:
 
 ```bash
 export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
@@ -60,8 +55,7 @@ export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
 
 ### PingFederate
 
-- `AUTH_SERVER_USERNAME`: Username for the PingFederate admin API.
-- `AUTH_SERVER_PASSWORD`: Password for the PingFederate admin API.
+Set `AUTH_SERVER_USERNAME` and `AUTH_SERVER_PASSWORD` for the PingFederate admin API.
 
 ## Next step
 

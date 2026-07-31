@@ -46,7 +46,9 @@ When a toggle is set to `false`, no resources for that authorization server are 
 
 ## Configuration
 
-Set the following environment variables before running Terraform:
+Set the following environment variables before running Terraform. See the
+[configuration reference](configuration.md#import-tool-import-terraform) for the full list of
+Terraform variables, environment variables, and defaults.
 
 - `PINGFEDERATE_PROVIDER_USERNAME`: The username for the PingFederate admin API.
 - `PINGFEDERATE_PROVIDER_PASSWORD`: The password for the PingFederate admin API.

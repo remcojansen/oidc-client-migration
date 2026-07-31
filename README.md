@@ -45,6 +45,8 @@ Currently supported authorization servers: Keycloak and PingFederate.
 
 - [docs/exporting.md](docs/exporting.md): building and running the export tool.
 - [docs/importing.md](docs/importing.md): configuring and running the Terraform import.
+- [docs/configuration.md](docs/configuration.md): single reference for every environment variable
+  and Terraform variable used by the export tool and the Terraform import.
 - [docs/canonical-client-config-v0.1.md](docs/canonical-client-config-v0.1.md) /
   [docs/canonical-client-config-v0.1.schema.json](docs/canonical-client-config-v0.1.schema.json):
   the canonical client configuration model shared by both.
