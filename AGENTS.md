@@ -20,6 +20,8 @@ obvious fit. Propose it and get confirmation before creating it.
 
 - Use **Conventional Commits** style, with an **all-lowercase header**.
   Example: `feat: add export retry logic`, `fix: correct pingfederate secret mapping`.
+- The commit **body** (if present) uses regular capitalization — normal sentence casing,
+  not all-lowercase.
 - Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`.
 - Do **not** add a `Co-authored-by:` trailer for the AI agent to commits in this repository.
 
