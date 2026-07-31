@@ -37,7 +37,7 @@ variable "provider_keycloak_client_id" {
 variable "provider_keycloak_tls_skip_verify" {
   description = "Whether to skip TLS verification for the Keycloak provider. The Keycloak Terraform provider does not support configuring this via an environment variable, so this must be set via this Terraform variable."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "provider_keycloak_username" {
@@ -66,11 +66,11 @@ variable "keycloak_realm_id" {
 variable "pingfederate_enabled" {
   description = "Whether PingFederate client provisioning is enabled"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "keycloak_enabled" {
   description = "Whether Keycloak client provisioning is enabled"
   type        = bool
-  default     = true
+  default     = false
 }

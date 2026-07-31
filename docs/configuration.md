@@ -22,7 +22,8 @@ passed as command-line flags or committed to a config file).
 The Terraform import is configured through a mix of Terraform variables (settable via
 `terraform.tfvars`, `-var`, or `TF_VAR_<name>` environment variables) and, for credentials, native
 provider environment variables. Credentials should be supplied via environment variables rather
-than committed to `terraform.tfvars`.
+than committed to `terraform.tfvars`. Copy [`import/terraform.tfvars.example`](../import/terraform.tfvars.example)
+to `import/terraform.tfvars` (gitignored) as a starting point.
 
 ### PingFederate
 
@@ -41,7 +42,7 @@ than committed to `terraform.tfvars`.
 | --- | --- | --- | --- | --- |
 | Admin API URL | `provider_keycloak_url` | `KEYCLOAK_URL` | Yes | Base URL of the Keycloak instance. Leave the Terraform variable unset (default `null`) to use the environment variable instead. |
 | Client ID | `provider_keycloak_client_id` | `KEYCLOAK_CLIENT_ID` | No | Client used for admin API authentication (password grant). Leave the Terraform variable unset (default `null`) to use the environment variable instead. |
-| Skip TLS verification | `provider_keycloak_tls_skip_verify` | — | No (default `true`) | Trust any TLS certificate when connecting. Not supported as an environment variable by the Keycloak Terraform provider — must be set via this Terraform variable. |
+| Skip TLS verification | `provider_keycloak_tls_skip_verify` | — | No (default `false`) | Trust any TLS certificate when connecting. Not supported as an environment variable by the Keycloak Terraform provider — must be set via this Terraform variable. |
 | Username | `provider_keycloak_username` | `KEYCLOAK_USER` | Yes | Admin username. Leave the Terraform variable unset (default `null`) to use the `KEYCLOAK_USER` environment variable instead. |
 | Password | `provider_keycloak_password` | `KEYCLOAK_PASSWORD` | Yes | Admin password. Leave the Terraform variable unset (default `null`) to use the `KEYCLOAK_PASSWORD` environment variable instead. |
 
@@ -51,5 +52,5 @@ than committed to `terraform.tfvars`.
 | --- | --- | --- | --- |
 | Canonical config path | `config_base` | Yes | Path to the directory of canonical client configuration YAML files (default expected: `../client-configurations/`). |
 | Keycloak realm | `keycloak_realm_id` | Yes | ID of the realm where Keycloak clients will be created. |
-| PingFederate provisioning toggle | `pingfederate_enabled` | No (default `true`) | Enables/disables PingFederate client provisioning. |
-| Keycloak provisioning toggle | `keycloak_enabled` | No (default `true`) | Enables/disables Keycloak client provisioning. |
+| PingFederate provisioning toggle | `pingfederate_enabled` | No (default `false`) | Enables/disables PingFederate client provisioning. |
+| Keycloak provisioning toggle | `keycloak_enabled` | No (default `false`) | Enables/disables Keycloak client provisioning. |

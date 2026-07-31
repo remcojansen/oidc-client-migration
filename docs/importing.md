@@ -15,7 +15,8 @@ Supported target systems:
 - `variables.tf`: Defines root-level Terraform variables such as provider settings and
   `config_base`.
 - `providers.tf`: Configures required providers and provider authentication settings.
-- `terraform.tfvars`: Environment-specific Terraform variable values.
+- `terraform.tfvars.example`: Template for environment-specific Terraform variable values. Copy it
+  to `terraform.tfvars` (gitignored) and fill in real values before running Terraform.
 - `modules/oauth-client-pingfederate`: Reusable module for provisioning a client in PingFederate.
 - `modules/oauth-client-keycloak`: Reusable module for provisioning a client in Keycloak.
 
@@ -32,8 +33,9 @@ Each YAML file is decoded and passed to both modules, which consume the canonica
 
 Provisioning for each authorization server can be toggled independently using root variables:
 
-- `pingfederate_enabled` (bool): Enables or disables PingFederate provisioning.
-- `keycloak_enabled` (bool): Enables or disables Keycloak provisioning.
+- `pingfederate_enabled` (bool): Enables or disables PingFederate provisioning. Defaults to
+  `false`.
+- `keycloak_enabled` (bool): Enables or disables Keycloak provisioning. Defaults to `false`.
 
 Example in `terraform.tfvars`:
 
