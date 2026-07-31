@@ -107,3 +107,47 @@ func TestMapGrantTypes_DeviceCodeNotEnabled(t *testing.T) {
 		t.Errorf("mapGrantTypes() = %v, want empty", got)
 	}
 }
+
+func TestMapOfflineSessionMaxLifetimeSeconds(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"client.offline.session.max.lifespan": "259200",
+		},
+	}
+	if got := cfg.mapOfflineSessionMaxLifetimeSeconds(); got != 259200 {
+		t.Errorf("mapOfflineSessionMaxLifetimeSeconds() = %d, want 259200", got)
+	}
+}
+
+func TestMapOfflineSessionIdleTimeoutSeconds(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"client.offline.session.idle.timeout": "86400",
+		},
+	}
+	if got := cfg.mapOfflineSessionIdleTimeoutSeconds(); got != 86400 {
+		t.Errorf("mapOfflineSessionIdleTimeoutSeconds() = %d, want 86400", got)
+	}
+}
+
+func TestMapSessionMaxLifetimeSeconds(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"client.session.max.lifespan": "3600",
+		},
+	}
+	if got := cfg.mapSessionMaxLifetimeSeconds(); got != 3600 {
+		t.Errorf("mapSessionMaxLifetimeSeconds() = %d, want 3600", got)
+	}
+}
+
+func TestMapSessionIdleTimeoutSeconds(t *testing.T) {
+	cfg := &KeycloakClientConfig{
+		Attributes: map[string]string{
+			"client.session.idle.timeout": "1800",
+		},
+	}
+	if got := cfg.mapSessionIdleTimeoutSeconds(); got != 1800 {
+		t.Errorf("mapSessionIdleTimeoutSeconds() = %d, want 1800", got)
+	}
+}

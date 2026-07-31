@@ -88,8 +88,10 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `par_required` | bool | Whether pushed authorization requests are required. |
 | `access_token_format` | string | `jwt` or `opaque`. Authorization-server policy, not registration metadata. |
 | `access_token_lifetime_seconds` | integer | Access token lifetime in seconds. |
-| `refresh_token_lifetime_seconds` | integer | Refresh token lifetime in seconds. |
-| `refresh_token_idle_timeout_seconds` | integer | Refresh token idle timeout in seconds. |
+| `offline_session_max_lifetime_seconds` | integer | Maximum lifetime, in seconds, of a persistent/offline refresh token — one that must remain usable independently of any browser SSO session (e.g. for native/mobile apps, or backend services refreshing tokens unattended). |
+| `offline_session_idle_timeout_seconds` | integer | Idle timeout, in seconds, of a persistent/offline refresh token. |
+| `session_max_lifetime_seconds` | integer | Maximum lifetime, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent — PingFederate refresh tokens are always persistent grants, not session-bound. |
+| `session_idle_timeout_seconds` | integer | Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent. |
 | `rotate_refresh_tokens` | bool | Whether refresh token rotation is enabled. |
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
 | `require_terms_and_conditions_approval` | bool | Whether terms-and-conditions approval is required. |

@@ -10,8 +10,6 @@
 # - client.initiate_login_uri --> Unsupported
 # - client.sector_identifier_uri --> Unsupported
 # - client.subject_type --> Unsupported
-# - extensions.refresh_token_lifetime_seconds --> Unsupported
-# - extensions.refresh_token_idle_timeout_seconds --> Unsupported
 # - extensions.rotate_refresh_tokens --> Unsupported
 # - extensions.access_token_format --> Support for lightweight access tokens intended for later
 
@@ -36,17 +34,31 @@ locals {
   optional_scopes           = try(local.client.scopes, null) == null ? [] : local.client.scopes
 
   # Normalize nullable booleans for use in conditions/provider boolean fields.
-  enabled                    = try(local.extensions.enabled, null) != false
-  consent_required           = try(local.client.consent_required, null) == true
-  par_required               = try(local.extensions.par_required, null) == true
-  dpop_required              = try(local.extensions.dpop_required, null) == true
-  require_tnc                = try(local.extensions.require_terms_and_conditions_approval, null) == true
-  pkce_required             = try(local.extensions.pkce_required, null) == true
+  enabled          = try(local.extensions.enabled, null) != false
+  consent_required = try(local.client.consent_required, null) == true
+  par_required     = try(local.extensions.par_required, null) == true
+  dpop_required    = try(local.extensions.dpop_required, null) == true
+  require_tnc      = try(local.extensions.require_terms_and_conditions_approval, null) == true
+  pkce_required    = try(local.extensions.pkce_required, null) == true
 
   # Normalize nullable strings used in extra_config and URL toggles.
   frontchannel_logout_uri = try(local.client.frontchannel_logout_uri, null) == null ? "" : local.client.frontchannel_logout_uri
   backchannel_logout_uri  = try(local.client.backchannel_logout_uri, null) == null ? "" : local.client.backchannel_logout_uri
   jwks_uri                = try(local.client.jwks_uri, null) == null ? "" : local.client.jwks_uri
+
+  # Offline session lifetime/idle timeout: the persistent-refresh-token attributes, only
+  # honored by Keycloak for clients that request the offline_access scope, so we add that
+  # scope below whenever either of these is configured.
+  offline_session_max_lifetime_seconds = try(local.extensions.offline_session_max_lifetime_seconds, null)
+  offline_session_idle_timeout_seconds = try(local.extensions.offline_session_idle_timeout_seconds, null)
+  # Purely an internal computed flag (not a Keycloak provider setting) used below to decide
+  # whether offline_access needs to be added to the client's optional scopes.
+  needs_offline_access_scope = local.offline_session_max_lifetime_seconds != null || local.offline_session_idle_timeout_seconds != null
+
+  # Session lifetime/idle timeout: governs refresh tokens tied to the browser SSO session
+  # (i.e. clients not using offline_access).
+  session_max_lifetime_seconds = try(local.extensions.session_max_lifetime_seconds, null)
+  session_idle_timeout_seconds = try(local.extensions.session_idle_timeout_seconds, null)
 
   # Canonical application_type convention: web -> confidential, native -> public 
   access_type = local.client.application_type == "web" ? "CONFIDENTIAL" : "PUBLIC"
@@ -106,6 +118,11 @@ resource "keycloak_openid_client" "this" {
 
   access_token_lifespan = try(local.extensions.access_token_lifetime_seconds, null)
 
+  client_session_max_lifespan         = local.session_max_lifetime_seconds != null ? tostring(local.session_max_lifetime_seconds) : null
+  client_session_idle_timeout         = local.session_idle_timeout_seconds != null ? tostring(local.session_idle_timeout_seconds) : null
+  client_offline_session_max_lifespan = local.offline_session_max_lifetime_seconds != null ? tostring(local.offline_session_max_lifetime_seconds) : null
+  client_offline_session_idle_timeout = local.offline_session_idle_timeout_seconds != null ? tostring(local.offline_session_idle_timeout_seconds) : null
+
   frontchannel_logout_enabled     = local.frontchannel_logout_uri != ""
   frontchannel_logout_url         = local.frontchannel_logout_uri != "" ? local.frontchannel_logout_uri : null
   backchannel_logout_url          = local.backchannel_logout_uri != "" ? local.backchannel_logout_uri : null
@@ -126,7 +143,11 @@ resource "keycloak_openid_client_optional_scopes" "this" {
   realm_id  = var.realm_id
   client_id = keycloak_openid_client.this.id
 
-  optional_scopes = concat(local.default_scopes, local.optional_scopes)
+  optional_scopes = distinct(concat(
+    local.default_scopes,
+    local.optional_scopes,
+    local.needs_offline_access_scope ? ["offline_access"] : []
+  ))
 }
 
 # Create an audience mapping to set the client ID as audience

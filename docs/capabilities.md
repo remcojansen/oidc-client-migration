@@ -63,8 +63,10 @@ They only round-trip through canonical files if set by hand.
 | `par_required` | ✅ | ✅ | ✅ | ✅ |
 | `access_token_format` | ~ [6] | ❌ [7] | ~ [8] | ~ [8] |
 | `access_token_lifetime_seconds` | ✅ | ✅ | ~ [8] | ~ [8] |
-| `refresh_token_lifetime_seconds` | ❌ | ❌ | ✅ | ✅ |
-| `refresh_token_idle_timeout_seconds` | ❌ | ❌ | ✅ | ✅ |
+| `offline_session_max_lifetime_seconds` | ✅ | ✅ [10] | ✅ | ✅ |
+| `offline_session_idle_timeout_seconds` | ✅ | ✅ [10] | ✅ | ✅ |
+| `session_max_lifetime_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
+| `session_idle_timeout_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
 | `rotate_refresh_tokens` | ~ [9] | ❌ | ✅ | ✅ |
 | `minimum_acr_value` | ✅ | ✅ | ✅ | ✅ |
 | `require_terms_and_conditions_approval` | ✅ | ✅ | ✅ | ✅ |
@@ -98,3 +100,13 @@ They only round-trip through canonical files if set by hand.
    `jwtstandardlong` = JWT/1800s), so only those discrete combinations round-trip faithfully.
 9. **`rotate_refresh_tokens` (Keycloak export)**: Keycloak has no native "rotate refresh tokens"
    toggle; approximated as `true` whenever refresh tokens are in use at all.
+10. **`offline_session_max_lifetime_seconds` / `offline_session_idle_timeout_seconds` (Keycloak
+    import)**: mapped to Keycloak's per-client `client.offline.session.max.lifespan` /
+    `client.offline.session.idle.timeout` attributes, which only govern true persistent refresh
+    tokens issued to clients that request the `offline_access` scope. Since setting these
+    attributes has no effect otherwise, the import automatically adds `offline_access` to the
+    client's optional scopes whenever either value is configured.
+11. **`session_max_lifetime_seconds` / `session_idle_timeout_seconds` (PingFederate)**:
+    PingFederate has no concept of a refresh token lifetime that is distinct from its persistent
+    grant settings, so these fields have no PingFederate equivalent and are not read/applied by
+    the PingFederate export/import.

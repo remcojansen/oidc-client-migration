@@ -149,8 +149,8 @@ func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.Canoni
 			PARRequired:                       c.mapPARRequired(),
 			AccessTokenFormat:                 c.mapAccessTokenFormat(),
 			AccessTokenLifetimeSeconds:        c.mapAccessTokenLifetimeSeconds(),
-			RefreshTokenLifetimeSeconds:       c.mapRefreshTokenLifetimeSeconds(),
-			RefreshTokenIdleTimeoutSeconds:    c.mapRefreshTokenIdleTimeoutSeconds(),
+			OfflineSessionMaxLifetimeSeconds:  c.mapOfflineSessionMaxLifetimeSeconds(),
+			OfflineSessionIdleTimeoutSeconds:  c.mapOfflineSessionIdleTimeoutSeconds(),
 			RotateRefreshTokens:               c.mapRotateRefreshTokens(),
 			MinimumACRValue:                   c.mapMinimumACRValue(),
 			RequireTermsAndConditionsApproval: c.mapRequireTermsAndConditionsApproval(),
@@ -378,26 +378,26 @@ func (c *PingFederateClientConfig) mapAccessTokenLifetimeSeconds() int {
 	return authserver.AccessTokenLifetimeShort
 }
 
-func (c *PingFederateClientConfig) mapRefreshTokenLifetimeSeconds() int {
+func (c *PingFederateClientConfig) mapOfflineSessionMaxLifetimeSeconds() int {
 	if c.PersistentGrantExpirationType == "OVERRIDE_SERVER_DEFAULT" {
 		timeSec, err := calculateSeconds(c.PersistentGrantExpirationTime, c.PersistentGrantExpirationTimeUnit)
 		if err != nil {
-			return authserver.RefreshTokenLifetimeDefault
+			return authserver.OfflineSessionMaxLifetimeDefault
 		}
 		return timeSec
 	}
-	return authserver.RefreshTokenLifetimeDefault
+	return authserver.OfflineSessionMaxLifetimeDefault
 }
 
-func (c *PingFederateClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
+func (c *PingFederateClientConfig) mapOfflineSessionIdleTimeoutSeconds() int {
 	if c.PersistentGrantIdleTimeoutType == "OVERRIDE_SERVER_DEFAULT" {
 		timeSec, err := calculateSeconds(c.PersistentGrantIdleTimeout, c.PersistentGrantIdleTimeoutTimeUnit)
 		if err != nil {
-			return authserver.RefreshTokenIdleTimeoutDefault
+			return authserver.OfflineSessionIdleTimeoutDefault
 		}
 		return timeSec
 	}
-	return authserver.RefreshTokenIdleTimeoutDefault
+	return authserver.OfflineSessionIdleTimeoutDefault
 }
 
 func (c *PingFederateClientConfig) mapMinimumACRValue() string {

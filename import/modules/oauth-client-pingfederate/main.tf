@@ -17,6 +17,10 @@
 # - client.policy_uri --> Unsupported
 # - client.response_types --> Unsupported (client type is derived from grant_types instead)
 # - client.application_type --> Unsupported (client type is derived from token_endpoint_auth_method instead)
+# - extensions.session_max_lifetime_seconds --> Unsupported (no PingFederate equivalent; PingFederate's
+#   persistent grant lifetime applies unconditionally, so it is only represented by
+#   extensions.offline_session_max_lifetime_seconds)
+# - extensions.session_idle_timeout_seconds --> Unsupported (see above)
 
 locals {
   # Define which scopes are "common" and hence available to all clients by default;
@@ -56,8 +60,8 @@ locals {
 
   access_token_lifetime_seconds = try(local.extensions.access_token_lifetime_seconds, 300)
 
-  refresh_token_lifetime_minutes     = max(1, ceil(try(local.extensions.refresh_token_lifetime_seconds, 0) / 60))
-  refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.refresh_token_idle_timeout_seconds, 0) / 60))
+  refresh_token_lifetime_minutes     = max(1, ceil(try(local.extensions.offline_session_max_lifetime_seconds, 0) / 60))
+  refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.offline_session_idle_timeout_seconds, 0) / 60))
 
   atm_id = lookup(
     lookup(local.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
@@ -136,10 +140,10 @@ resource "pingfederate_oauth_client" "this" {
   lockout_max_malicious_actions_type      = "SERVER_DEFAULT"
   persistent_grant_expiration_time        = local.refresh_token_lifetime_minutes
   persistent_grant_expiration_time_unit   = "MINUTES"
-  persistent_grant_expiration_type        = try(local.extensions.refresh_token_lifetime_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
+  persistent_grant_expiration_type        = try(local.extensions.offline_session_max_lifetime_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
   persistent_grant_idle_timeout           = local.refresh_token_idle_timeout_minutes
   persistent_grant_idle_timeout_time_unit = "MINUTES"
-  persistent_grant_idle_timeout_type      = try(local.extensions.refresh_token_idle_timeout_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
+  persistent_grant_idle_timeout_type      = try(local.extensions.offline_session_idle_timeout_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
   refresh_rolling                         = try(local.extensions.rotate_refresh_tokens, true) ? "ROLL" : "DONT_ROLL"
   # refresh_token_rolling_grace_period       = 0
   refresh_token_rolling_grace_period_type = "SERVER_DEFAULT"

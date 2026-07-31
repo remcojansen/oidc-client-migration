@@ -102,8 +102,10 @@ func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalC
 			PARRequired:                       c.mapPARRequired(),
 			AccessTokenFormat:                 c.mapAccessTokenFormat(),
 			AccessTokenLifetimeSeconds:        c.mapAccessTokenLifetimeSeconds(),
-			RefreshTokenLifetimeSeconds:       c.mapRefreshTokenLifetimeSeconds(),
-			RefreshTokenIdleTimeoutSeconds:    c.mapRefreshTokenIdleTimeoutSeconds(),
+			OfflineSessionMaxLifetimeSeconds:  c.mapOfflineSessionMaxLifetimeSeconds(),
+			OfflineSessionIdleTimeoutSeconds:  c.mapOfflineSessionIdleTimeoutSeconds(),
+			SessionMaxLifetimeSeconds:         c.mapSessionMaxLifetimeSeconds(),
+			SessionIdleTimeoutSeconds:         c.mapSessionIdleTimeoutSeconds(),
 			RotateRefreshTokens:               c.mapRotateRefreshTokens(),
 			MinimumACRValue:                   c.mapMinimumACRValue(),
 			RequireTermsAndConditionsApproval: c.mapRequireTermsAndConditionsApproval(),
@@ -359,14 +361,39 @@ func (c *KeycloakClientConfig) mapAccessTokenLifetimeSeconds() int {
 	return authserver.AccessTokenLifetimeDefault
 }
 
-func (c *KeycloakClientConfig) mapRefreshTokenLifetimeSeconds() int {
-	// Not available in Keycloak client config, returning default
-	return authserver.RefreshTokenLifetimeDefault
+func (c *KeycloakClientConfig) mapOfflineSessionMaxLifetimeSeconds() int {
+	// Keycloak's "offline session max lifespan" client attribute governs the lifetime of
+	// persistent/offline refresh tokens, which are only issued to clients that request the
+	// offline_access scope (see import/modules/oauth-client-keycloak, which adds that scope
+	// automatically whenever this value is set).
+	if val, ok := strconv.Atoi(c.Attributes["client.offline.session.max.lifespan"]); ok == nil {
+		return val
+	}
+	return authserver.OfflineSessionMaxLifetimeDefault
 }
 
-func (c *KeycloakClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
-	// Not available in Keycloak client config, returning default
-	return authserver.RefreshTokenIdleTimeoutDefault
+func (c *KeycloakClientConfig) mapOfflineSessionIdleTimeoutSeconds() int {
+	if val, ok := strconv.Atoi(c.Attributes["client.offline.session.idle.timeout"]); ok == nil {
+		return val
+	}
+	return authserver.OfflineSessionIdleTimeoutDefault
+}
+
+func (c *KeycloakClientConfig) mapSessionMaxLifetimeSeconds() int {
+	// Keycloak's "session max lifespan" client attribute governs the lifetime of refresh
+	// tokens tied to the browser SSO session (i.e. clients that do not request offline_access).
+	// There is no PingFederate equivalent for this concept.
+	if val, ok := strconv.Atoi(c.Attributes["client.session.max.lifespan"]); ok == nil {
+		return val
+	}
+	return authserver.SessionMaxLifetimeDefault
+}
+
+func (c *KeycloakClientConfig) mapSessionIdleTimeoutSeconds() int {
+	if val, ok := strconv.Atoi(c.Attributes["client.session.idle.timeout"]); ok == nil {
+		return val
+	}
+	return authserver.SessionIdleTimeoutDefault
 }
 
 func (c *KeycloakClientConfig) mapRotateRefreshTokens() bool {

@@ -7,8 +7,10 @@ const AccessTokenLifetimeLong = 1800
 const AccessTokenLifetimeShort = 300
 const AccessTokenLifetimeDefault = 0 // avoid inclusion if not set
 
-const RefreshTokenLifetimeDefault = 0    // avoid inclusion if not set
-const RefreshTokenIdleTimeoutDefault = 0 // avoid inclusion if not set
+const OfflineSessionMaxLifetimeDefault = 0 // avoid inclusion if not set
+const OfflineSessionIdleTimeoutDefault = 0 // avoid inclusion if not set
+const SessionMaxLifetimeDefault = 0        // avoid inclusion if not set
+const SessionIdleTimeoutDefault = 0        // avoid inclusion if not set
 
 const ClientTypePublic = "public"
 const ClientTypeConfidential = "confidential"

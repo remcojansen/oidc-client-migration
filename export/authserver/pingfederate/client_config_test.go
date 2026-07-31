@@ -51,8 +51,8 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		t.Error("expected PKCERequired to be true")
 	}
 
-	if canonical.Extensions.RefreshTokenLifetimeSeconds != 7200 {
-		t.Errorf("RefreshTokenLifetimeSeconds = %d, want 7200 (2 hours)", canonical.Extensions.RefreshTokenLifetimeSeconds)
+	if canonical.Extensions.OfflineSessionMaxLifetimeSeconds != 7200 {
+		t.Errorf("OfflineSessionMaxLifetimeSeconds = %d, want 7200 (2 hours)", canonical.Extensions.OfflineSessionMaxLifetimeSeconds)
 	}
 
 	if canonical.Secrets.EncryptedSecret != "enc-s3cr3t" {
