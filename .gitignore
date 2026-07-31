@@ -20,6 +20,7 @@
 # Go workspace file
 go.work
 
+# IDE
 .idea
 .vscode
 
@@ -29,16 +30,16 @@ dist/
 # asdf
 .tool-versions
 
-# local tmp
+# local workspace
+.envrc
 tmp/
-
 .DS_Store
 
 # the executable
 bin/*
 ocm
 
-# the client configurations
+# client configurations
 client-configurations/*
 !client-configurations/README.md
 
