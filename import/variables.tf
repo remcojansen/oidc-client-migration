@@ -56,6 +56,7 @@ variable "provider_keycloak_password" {
 variable "config_base" {
   description = "The base path to the client config files"
   type        = string
+  default     = "../client-configurations"
 }
 
 variable "keycloak_realm_id" {

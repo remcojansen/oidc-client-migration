@@ -11,7 +11,7 @@ provider_keycloak_url             = ""
 provider_keycloak_client_id       = ""
 provider_keycloak_tls_skip_verify = false
 
-config_base = ""
+config_base = "../client-configurations"
 
 keycloak_realm_id = ""
 

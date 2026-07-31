@@ -50,7 +50,7 @@ to `import/terraform.tfvars` (gitignored) as a starting point.
 
 | Setting | Terraform variable | Required | Description |
 | --- | --- | --- | --- |
-| Canonical config path | `config_base` | Yes | Path to the directory of canonical client configuration YAML files (default expected: `../client-configurations/`). |
+| Canonical config path | `config_base` | No (default `../client-configurations`) | Path to the directory of canonical client configuration YAML files. |
 | Keycloak realm | `keycloak_realm_id` | Yes | ID of the realm where Keycloak clients will be created. |
 | PingFederate provisioning toggle | `pingfederate_enabled` | No (default `false`) | Enables/disables PingFederate client provisioning. |
 | Keycloak provisioning toggle | `keycloak_enabled` | No (default `false`) | Enables/disables Keycloak client provisioning. |
