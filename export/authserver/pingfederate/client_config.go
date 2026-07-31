@@ -1,11 +1,24 @@
-package authserver
+package pingfederate
 
 import (
 	"encoding/json"
 	"fmt"
+	"ocm/export/authserver"
 	"ocm/export/oidcconfig"
 	"strings"
 )
+
+// PingFederateRefreshRollingDefault is PingFederate's server-default refresh-token rotation setting.
+const PingFederateRefreshRollingDefault = "ROLL"
+
+func contains[T comparable](elems []T, v T) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
 
 func CreatePingFederateClientConfig() *PingFederateClientConfig {
 	return &PingFederateClientConfig{}
@@ -214,21 +227,21 @@ func (c *PingFederateClientConfig) mapGrantTypes() []string {
 	for _, gt := range c.GrantTypes {
 		switch gt {
 		case "AUTHORIZATION_CODE":
-			g = append(g, GrantTypeAuthorizationCode)
+			g = append(g, authserver.GrantTypeAuthorizationCode)
 		case "IMPLICIT":
-			g = append(g, GrantTypeImplicit)
+			g = append(g, authserver.GrantTypeImplicit)
 		case "REFRESH_TOKEN":
-			g = append(g, GrantTypeRefreshToken)
+			g = append(g, authserver.GrantTypeRefreshToken)
 		case "CLIENT_CREDENTIALS":
-			g = append(g, GrantTypeClientCredentials)
+			g = append(g, authserver.GrantTypeClientCredentials)
 		case "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
-			g = append(g, GrantTypeResourceOwnerPassword)
+			g = append(g, authserver.GrantTypeResourceOwnerPassword)
 		case "DEVICE_CODE":
-			g = append(g, GrantTypeDeviceCode)
+			g = append(g, authserver.GrantTypeDeviceCode)
 		case "TOKEN_EXCHANGE":
-			g = append(g, GrantTypeTokenExchange)
+			g = append(g, authserver.GrantTypeTokenExchange)
 		case "ACCESS_TOKEN_VALIDATION":
-			g = append(g, GrantTypeAccessTokenValidation)
+			g = append(g, authserver.GrantTypeAccessTokenValidation)
 		}
 	}
 	return g
@@ -237,17 +250,17 @@ func (c *PingFederateClientConfig) mapGrantTypes() []string {
 func (cc *PingFederateClientConfig) mapTokenEndpointAuthMethod() string {
 	switch cc.ClientAuth.Type {
 	case "NONE":
-		return AuthMethodNone
+		return authserver.AuthMethodNone
 	case "SECRET":
-		return AuthMethodClientSecretBasic
+		return authserver.AuthMethodClientSecretBasic
 	case "CLIENT_SECRET_JWT":
-		return AuthMethodClientSecretJwt
+		return authserver.AuthMethodClientSecretJwt
 	case "PRIVATE_KEY_JWT":
-		return AuthMethodPrivateKeyJwt
+		return authserver.AuthMethodPrivateKeyJwt
 	case "CLIENT_SECRET_BASIC":
-		return AuthMethodClientSecretBasic
+		return authserver.AuthMethodClientSecretBasic
 	default:
-		return AuthMethodClientSecretBasic
+		return authserver.AuthMethodClientSecretBasic
 	}
 }
 
@@ -277,16 +290,16 @@ func (c *PingFederateClientConfig) mapConsentRequired() bool {
 
 func (c *PingFederateClientConfig) mapApplicationType() string {
 	if c.ClientAuth.Type == "NONE" {
-		return ApplicationTypeNative
+		return authserver.ApplicationTypeNative
 	}
-	return ApplicationTypeWeb
+	return authserver.ApplicationTypeWeb
 }
 
 func (c *PingFederateClientConfig) mapSubjectType() string {
 	if c.OidcPolicy.PairwiseIdentifierUserType == true {
-		return SubjectTypePairwise
+		return authserver.SubjectTypePairwise
 	}
-	return SubjectTypePublic
+	return authserver.SubjectTypePublic
 }
 
 func (c *PingFederateClientConfig) mapSectorIdentifierURI() string {
@@ -353,38 +366,38 @@ func (c *PingFederateClientConfig) mapRotateRefreshTokens() bool {
 
 func (c *PingFederateClientConfig) mapAccessTokenFormat() string {
 	if strings.HasPrefix(c.DefaultAccessTokenManagerRef.Id, "jwt") {
-		return AccessTokenFormatJwt
+		return authserver.AccessTokenFormatJwt
 	}
-	return AccessTokenFormatOpaque
+	return authserver.AccessTokenFormatOpaque
 }
 
 func (c *PingFederateClientConfig) mapAccessTokenLifetimeSeconds() int {
 	if strings.HasSuffix(c.DefaultAccessTokenManagerRef.Id, "long") {
-		return AccessTokenLifetimeLong
+		return authserver.AccessTokenLifetimeLong
 	}
-	return AccessTokenLifetimeShort
+	return authserver.AccessTokenLifetimeShort
 }
 
 func (c *PingFederateClientConfig) mapRefreshTokenLifetimeSeconds() int {
 	if c.PersistentGrantExpirationType == "OVERRIDE_SERVER_DEFAULT" {
 		timeSec, err := calculateSeconds(c.PersistentGrantExpirationTime, c.PersistentGrantExpirationTimeUnit)
 		if err != nil {
-			return RefreshTokenLifetimeDefault
+			return authserver.RefreshTokenLifetimeDefault
 		}
 		return timeSec
 	}
-	return RefreshTokenLifetimeDefault
+	return authserver.RefreshTokenLifetimeDefault
 }
 
 func (c *PingFederateClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
 	if c.PersistentGrantIdleTimeoutType == "OVERRIDE_SERVER_DEFAULT" {
 		timeSec, err := calculateSeconds(c.PersistentGrantIdleTimeout, c.PersistentGrantIdleTimeoutTimeUnit)
 		if err != nil {
-			return RefreshTokenIdleTimeoutDefault
+			return authserver.RefreshTokenIdleTimeoutDefault
 		}
 		return timeSec
 	}
-	return RefreshTokenIdleTimeoutDefault
+	return authserver.RefreshTokenIdleTimeoutDefault
 }
 
 func (c *PingFederateClientConfig) mapMinimumACRValue() string {

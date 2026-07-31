@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"ocm/export/authserver"
+	"ocm/export/authserver/keycloak"
+	"ocm/export/authserver/pingfederate"
 	"os"
 )
 
@@ -32,11 +34,11 @@ func main() {
 	var c authserver.AuthServerClient
 	switch sourceSystem {
 	case "pingfederate":
-		c = authserver.CreatePingFederateClient().
+		c = pingfederate.CreatePingFederateClient().
 			WithBaseURL(os.Getenv("AUTH_SERVER_BASE_URL")).
 			WithUsernamePassword(os.Getenv("AUTH_SERVER_USERNAME"), os.Getenv("AUTH_SERVER_PASSWORD"))
 	case "keycloak":
-		c = authserver.CreateKeycloakClient().
+		c = keycloak.CreateKeycloakClient().
 			WithBaseURL(os.Getenv("AUTH_SERVER_BASE_URL")).
 			WithAccessToken(os.Getenv("AUTH_SERVER_ACCESS_TOKEN"))
 	default:

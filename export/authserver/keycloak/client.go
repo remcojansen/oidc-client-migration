@@ -1,4 +1,4 @@
-package authserver
+package keycloak
 
 import (
 	"crypto/tls"
@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"ocm/export/authserver"
 	"strings"
 	"time"
 )
@@ -38,18 +39,18 @@ func CreateKeycloakClient() *KeycloakClient {
 	return c
 }
 
-func (c *KeycloakClient) WithUsernamePassword(username, password string) AuthServerClient {
+func (c *KeycloakClient) WithUsernamePassword(username, password string) authserver.AuthServerClient {
 	basicAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
 	c.header.Set("Authorization", basicAuth)
 	return c
 }
 
-func (c *KeycloakClient) WithAccessToken(token string) AuthServerClient {
+func (c *KeycloakClient) WithAccessToken(token string) authserver.AuthServerClient {
 	c.header.Set("Authorization", "Bearer "+token)
 	return c
 }
 
-func (c *KeycloakClient) WithBaseURL(baseURL string) AuthServerClient {
+func (c *KeycloakClient) WithBaseURL(baseURL string) authserver.AuthServerClient {
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
 	if before, after, ok := strings.Cut(baseURL, "/realms/"); ok {
@@ -62,7 +63,7 @@ func (c *KeycloakClient) WithBaseURL(baseURL string) AuthServerClient {
 	return c
 }
 
-func (c *KeycloakClient) FetchClientConfigurations() ([]OAuthClientConfig, error) {
+func (c *KeycloakClient) FetchClientConfigurations() ([]authserver.OAuthClientConfig, error) {
 	// Keycloak Admin API endpoint for fetching clients
 	url := fmt.Sprintf("%s/admin/realms/%s/clients", c.baseURL, c.realm)
 
@@ -92,7 +93,7 @@ func (c *KeycloakClient) FetchClientConfigurations() ([]OAuthClientConfig, error
 		return nil, err
 	}
 
-	oauthClients := make([]OAuthClientConfig, len(clientList))
+	oauthClients := make([]authserver.OAuthClientConfig, len(clientList))
 	for i := range clientList {
 		oauthClients[i] = &clientList[i]
 	}
@@ -100,7 +101,7 @@ func (c *KeycloakClient) FetchClientConfigurations() ([]OAuthClientConfig, error
 	return oauthClients, nil
 }
 
-func (c *KeycloakClient) FetchClientConfigurationByClientId(clientId string) (OAuthClientConfig, error) {
+func (c *KeycloakClient) FetchClientConfigurationByClientId(clientId string) (authserver.OAuthClientConfig, error) {
 	// Keycloak Admin API endpoint for fetching a specific client by ID
 	url := fmt.Sprintf("%s/admin/realms/%s/clients/%s", c.baseURL, c.realm, clientId)
 

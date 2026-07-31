@@ -1,11 +1,15 @@
-package authserver
+package keycloak
 
 import (
 	"encoding/json"
+	"ocm/export/authserver"
 	"ocm/export/oidcconfig"
 	"strconv"
 	"strings"
 )
+
+// KeycloakRefreshRollingDefault is Keycloak's default refresh-token rotation behavior.
+const KeycloakRefreshRollingDefault = true
 
 func CreateKeycloakClientConfig() *KeycloakClientConfig {
 	return &KeycloakClientConfig{}
@@ -183,24 +187,24 @@ func (c *KeycloakClientConfig) mapGrantTypes() []string {
 	var g []string
 
 	if c.StandardFlowEnabled {
-		g = append(g, GrantTypeAuthorizationCode)
+		g = append(g, authserver.GrantTypeAuthorizationCode)
 	}
 	if c.ImplicitFlowEnabled {
-		g = append(g, GrantTypeImplicit)
+		g = append(g, authserver.GrantTypeImplicit)
 	}
 	if c.Attributes["use.refresh.tokens"] == "true" {
-		g = append(g, GrantTypeRefreshToken)
+		g = append(g, authserver.GrantTypeRefreshToken)
 	}
 	if c.ServiceAccountsEnabled {
-		g = append(g, GrantTypeClientCredentials)
+		g = append(g, authserver.GrantTypeClientCredentials)
 	}
 	if c.DirectAccessGrantsEnabled {
-		g = append(g, GrantTypeResourceOwnerPassword)
+		g = append(g, authserver.GrantTypeResourceOwnerPassword)
 	}
 
 	// Check attributes for additional grant types
 	if val, ok := c.Attributes["token.response.type"]; ok && val == "device_code" {
-		g = append(g, GrantTypeDeviceCode)
+		g = append(g, authserver.GrantTypeDeviceCode)
 	}
 
 	return g
@@ -231,16 +235,16 @@ func (c *KeycloakClientConfig) mapTokenEndpointAuthMethod() string {
 	// Map client authenticator type to standard method
 	switch c.ClientAuthenticatorType {
 	case "client-secret":
-		return AuthMethodClientSecretBasic
+		return authserver.AuthMethodClientSecretBasic
 	case "client-secret-jwt":
-		return AuthMethodClientSecretJwt
+		return authserver.AuthMethodClientSecretJwt
 	case "client-jwt":
-		return AuthMethodPrivateKeyJwt
+		return authserver.AuthMethodPrivateKeyJwt
 	default:
 		if c.PublicClient {
-			return AuthMethodNone
+			return authserver.AuthMethodNone
 		}
-		return AuthMethodClientSecretBasic
+		return authserver.AuthMethodClientSecretBasic
 	}
 }
 
@@ -256,14 +260,14 @@ func (c *KeycloakClientConfig) mapConsentRequired() bool {
 
 func (c *KeycloakClientConfig) mapApplicationType() string {
 	if c.PublicClient {
-		return ApplicationTypeNative
+		return authserver.ApplicationTypeNative
 	}
-	return ApplicationTypeWeb
+	return authserver.ApplicationTypeWeb
 }
 
 func (c *KeycloakClientConfig) mapSubjectType() string {
 	// Not available in Keycloak client config, defaulting to "public"
-	return SubjectTypePublic
+	return authserver.SubjectTypePublic
 }
 
 func (c *KeycloakClientConfig) mapSectorIdentifierURI() string {
@@ -340,7 +344,7 @@ func (c *KeycloakClientConfig) mapPARRequired() bool {
 
 func (c *KeycloakClientConfig) mapAccessTokenFormat() string {
 	// Keycloak issues JWTs by default
-	return AccessTokenFormatJwt
+	return authserver.AccessTokenFormatJwt
 }
 
 func (c *KeycloakClientConfig) mapAccessTokenLifetimeSeconds() int {
@@ -348,17 +352,17 @@ func (c *KeycloakClientConfig) mapAccessTokenLifetimeSeconds() int {
 	if val, ok := strconv.Atoi(c.Attributes["access.token.lifespan"]); ok == nil {
 		return val
 	}
-	return AccessTokenLifetimeDefault
+	return authserver.AccessTokenLifetimeDefault
 }
 
 func (c *KeycloakClientConfig) mapRefreshTokenLifetimeSeconds() int {
 	// Not available in Keycloak client config, returning default
-	return RefreshTokenLifetimeDefault
+	return authserver.RefreshTokenLifetimeDefault
 }
 
 func (c *KeycloakClientConfig) mapRefreshTokenIdleTimeoutSeconds() int {
 	// Not available in Keycloak client config, returning default
-	return RefreshTokenIdleTimeoutDefault
+	return authserver.RefreshTokenIdleTimeoutDefault
 }
 
 func (c *KeycloakClientConfig) mapRotateRefreshTokens() bool {

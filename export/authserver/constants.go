@@ -32,6 +32,3 @@ const GrantTypeRefreshToken = "refresh_token"
 const GrantTypeDeviceCode = "device_code"
 const GrantTypeTokenExchange = "urn:ietf:params:oauth:grant-type:token-exchange"
 const GrantTypeAccessTokenValidation = "introspect"
-
-const KeycloakRefreshRollingDefault = true
-const PingFederateRefreshRollingDefault = "ROLL"
