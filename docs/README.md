@@ -11,3 +11,5 @@
   Terraform variable used by the export tool and the Terraform import.
 - [capabilities.md](capabilities.md): field support matrix showing which canonical fields are
   supported by Keycloak and PingFederate, on export and on import.
+- [examples/](examples/): sample canonical client configuration files illustrating realistic
+  client patterns (public/native, confidential, PKCE, DPoP, PAR, token exchange, etc.).

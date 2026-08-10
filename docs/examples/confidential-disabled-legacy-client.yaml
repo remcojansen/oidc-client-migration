@@ -1,0 +1,29 @@
+# Legacy confidential web client kept disabled pending decommission. Demonstrates
+# `extensions.enabled: false` and the `client_secret_post` auth method, plus the
+# (insecure) plain_secret field for a low-value, already-scheduled-for-retirement client.
+metadata:
+  owner_email: legacy-systems@example.com
+  owner_slack_channel: "#legacy-decommissioning"
+
+client:
+  client_id: legacy-intranet-app
+  client_name: Legacy Intranet App (deprecated)
+  description: Deprecated internal app scheduled for decommissioning; disabled at the authorization server.
+  redirect_uris:
+    - https://intranet-legacy.example.internal/callback
+  response_types:
+    - code
+  grant_types:
+    - authorization_code
+  token_endpoint_auth_method: client_secret_post
+  scopes:
+    - openid
+    - profile
+  application_type: web
+  subject_type: public
+
+extensions:
+  enabled: false
+
+secrets:
+  plain_secret: "REPLACE_ME"

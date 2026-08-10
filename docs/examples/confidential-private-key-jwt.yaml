@@ -1,0 +1,39 @@
+# Confidential client authenticating with private_key_jwt (asymmetric client assertions)
+# instead of a shared secret. The client publishes its public keys via jwks_uri so the
+# authorization server can validate signed client assertions and signed request objects.
+metadata:
+  owner_email: partner-integrations@example.com
+  owner_slack_channel: "#partner-integrations"
+
+client:
+  client_id: partner-api-integration
+  client_name: Example Partner API Integration
+  description: Backend integration for a trusted partner, using private_key_jwt client authentication.
+  client_uri: https://partner.example.com
+  jwks_uri: https://partner.example.com/.well-known/jwks.json
+  redirect_uris:
+    - https://partner.example.com/oidc/callback
+  response_types:
+    - code
+  grant_types:
+    - authorization_code
+    - refresh_token
+  token_endpoint_auth_method: private_key_jwt
+  token_endpoint_auth_signing_alg: RS256
+  id_token_signed_response_alg: RS256
+  request_object_signing_alg: RS256
+  scopes:
+    - openid
+    - profile
+    - partner:orders:read
+    - partner:orders:write
+  application_type: web
+  subject_type: public
+
+extensions:
+  enabled: true
+  access_token_format: jwt
+  access_token_lifetime_seconds: 600
+  offline_session_max_lifetime_seconds: 604800
+  offline_session_idle_timeout_seconds: 86400
+  rotate_refresh_tokens: true
