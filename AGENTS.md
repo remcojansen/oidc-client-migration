@@ -32,6 +32,8 @@ obvious fit. Propose it and get confirmation before creating it.
 - If the purpose doesn't cleanly fit a category (e.g. exploratory work, mixed-purpose branch),
   use a short descriptive branch name with **no prefix** rather than forcing a category.
 - Merge strategy: **squash merge** into `main` for a clean, linear history.
+- Keep PR descriptions concise, mirroring the commit message (summary + body) rather than
+  restating every changed file or adding a separate detailed change list.
 
 ## Validation before considering a change "done"
 
