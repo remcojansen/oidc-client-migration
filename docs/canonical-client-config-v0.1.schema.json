@@ -257,7 +257,7 @@
                     "type": "string",
                     "description": "Minimum ACR values enforced by the authorization server."
                 },
-                "require_terms_and_conditions_approval": {
+                "terms_and_conditions_required": {
                     "type": "boolean",
                     "description": "Whether users must approve terms and conditions during consent."
                 }

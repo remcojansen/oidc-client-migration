@@ -55,19 +55,19 @@ type CanonicalClientConfigClient struct {
 
 type CanonicalClientConfigExtensions struct {
 	// Non-standard extensions for additional client configuration options
-	Enabled                           bool   `json:"enabled" yaml:"enabled"` // default: true
-	PKCERequired                      bool   `json:"pkce_required,omitempty" yaml:"pkce_required,omitempty"`
-	DPoPRequired                      bool   `json:"dpop_required,omitempty" yaml:"dpop_required,omitempty"`
-	PARRequired                       bool   `json:"par_required,omitempty" yaml:"par_required,omitempty"`
-	AccessTokenFormat                 string `json:"access_token_format,omitempty" yaml:"access_token_format,omitempty"` // "jwt" or "opaque"
-	AccessTokenLifetimeSeconds        int    `json:"access_token_lifetime_seconds,omitempty" yaml:"access_token_lifetime_seconds,omitempty"`
-	OfflineSessionMaxLifetimeSeconds  int    `json:"offline_session_max_lifetime_seconds,omitempty" yaml:"offline_session_max_lifetime_seconds,omitempty"` // persistent/offline refresh token lifetime, independent of any browser SSO session
-	OfflineSessionIdleTimeoutSeconds  int    `json:"offline_session_idle_timeout_seconds,omitempty" yaml:"offline_session_idle_timeout_seconds,omitempty"`
-	SessionMaxLifetimeSeconds         int    `json:"session_max_lifetime_seconds,omitempty" yaml:"session_max_lifetime_seconds,omitempty"` // refresh token lifetime tied to the browser SSO session; no PingFederate equivalent
-	SessionIdleTimeoutSeconds         int    `json:"session_idle_timeout_seconds,omitempty" yaml:"session_idle_timeout_seconds,omitempty"`
-	RotateRefreshTokens               bool   `json:"rotate_refresh_tokens,omitempty" yaml:"rotate_refresh_tokens,omitempty"`
-	MinimumACRValue                   string `json:"minimum_acr_value,omitempty" yaml:"minimum_acr_value,omitempty"`                                         // minimum ACR values to be used regardless of the requested ACR values in the authorization request
-	RequireTermsAndConditionsApproval bool   `json:"require_terms_and_conditions_approval,omitempty" yaml:"require_terms_and_conditions_approval,omitempty"` // prompt users to accept authorization server's terms and conditions
+	Enabled                          bool   `json:"enabled" yaml:"enabled"` // default: true
+	PKCERequired                     bool   `json:"pkce_required,omitempty" yaml:"pkce_required,omitempty"`
+	DPoPRequired                     bool   `json:"dpop_required,omitempty" yaml:"dpop_required,omitempty"`
+	PARRequired                      bool   `json:"par_required,omitempty" yaml:"par_required,omitempty"`
+	AccessTokenFormat                string `json:"access_token_format,omitempty" yaml:"access_token_format,omitempty"` // "jwt" or "opaque"
+	AccessTokenLifetimeSeconds       int    `json:"access_token_lifetime_seconds,omitempty" yaml:"access_token_lifetime_seconds,omitempty"`
+	OfflineSessionMaxLifetimeSeconds int    `json:"offline_session_max_lifetime_seconds,omitempty" yaml:"offline_session_max_lifetime_seconds,omitempty"` // persistent/offline refresh token lifetime, independent of any browser SSO session
+	OfflineSessionIdleTimeoutSeconds int    `json:"offline_session_idle_timeout_seconds,omitempty" yaml:"offline_session_idle_timeout_seconds,omitempty"`
+	SessionMaxLifetimeSeconds        int    `json:"session_max_lifetime_seconds,omitempty" yaml:"session_max_lifetime_seconds,omitempty"` // refresh token lifetime tied to the browser SSO session; no PingFederate equivalent
+	SessionIdleTimeoutSeconds        int    `json:"session_idle_timeout_seconds,omitempty" yaml:"session_idle_timeout_seconds,omitempty"`
+	RotateRefreshTokens              bool   `json:"rotate_refresh_tokens,omitempty" yaml:"rotate_refresh_tokens,omitempty"`
+	MinimumACRValue                  string `json:"minimum_acr_value,omitempty" yaml:"minimum_acr_value,omitempty"`                         // minimum ACR values to be used regardless of the requested ACR values in the authorization request
+	TermsAndConditionsRequired       bool   `json:"terms_and_conditions_required,omitempty" yaml:"terms_and_conditions_required,omitempty"` // prompt users to accept authorization server's terms and conditions
 }
 
 type CanonicalClientConfigSecrets struct {
