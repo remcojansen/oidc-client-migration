@@ -1,0 +1,29 @@
+# Internal API gateway that exchanges an upstream service token for a downstream-scoped
+# token (RFC 8693 token exchange), authenticating with client_secret_jwt. Uses opaque
+# access tokens since downstream services validate them via introspection rather than
+# local JWT verification.
+metadata:
+  owner_email: api-gateway-team@example.com
+  owner_slack_channel: "#api-gateway"
+
+client:
+  client_id: internal-api-gateway
+  client_name: Example Internal API Gateway
+  description: Exchanges caller tokens for downstream-scoped tokens on behalf of internal services.
+  grant_types:
+    - token_exchange
+    - client_credentials
+  token_endpoint_auth_method: client_secret_jwt
+  token_endpoint_auth_signing_alg: HS256
+  scopes:
+    - internal:orders:read
+    - internal:inventory:read
+  application_type: web
+
+extensions:
+  enabled: true
+  access_token_format: opaque
+  access_token_lifetime_seconds: 120
+
+secrets:
+  encrypted_secret: "enc:v1:REPLACE_WITH_VAULT_REFERENCE"

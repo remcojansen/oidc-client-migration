@@ -1,0 +1,39 @@
+# Public single-page browser app secured with sender-constrained (DPoP) tokens instead of
+# relying solely on PKCE + short-lived tokens. Useful where refresh tokens must be bound
+# to the browser instance to reduce the impact of token exfiltration (e.g. via XSS).
+metadata:
+  owner_email: web-platform@example.com
+  owner_slack_channel: "#web-platform"
+
+client:
+  client_id: spa-dpop-dashboard
+  client_name: Example Customer Dashboard (SPA)
+  description: Browser-based single-page app for the customer dashboard, using DPoP-bound tokens.
+  client_uri: https://dashboard.example.com
+  redirect_uris:
+    - https://dashboard.example.com/callback
+  post_logout_redirect_uris:
+    - https://dashboard.example.com/logged-out
+  response_types:
+    - code
+  grant_types:
+    - authorization_code
+    - refresh_token
+  token_endpoint_auth_method: none
+  id_token_signed_response_alg: RS256
+  scopes:
+    - openid
+    - profile
+    - email
+  application_type: native
+  subject_type: public
+
+extensions:
+  enabled: true
+  pkce_required: true
+  dpop_required: true
+  access_token_format: jwt
+  access_token_lifetime_seconds: 300
+  session_max_lifetime_seconds: 43200
+  session_idle_timeout_seconds: 1800
+  rotate_refresh_tokens: true

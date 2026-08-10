@@ -1,0 +1,55 @@
+# High-assurance confidential client (e.g. open-banking style integration) requiring
+# pushed authorization requests, PKCE, and DPoP, plus pairwise subject identifiers and a
+# minimum step-up authentication level (ACR). Demonstrates the less common registration
+# fields: sector_identifier_uri, initiate_login_uri, request_uris, default/minimum ACR
+# values, and backchannel logout.
+metadata:
+  owner_email: open-banking@example.com
+  owner_slack_channel: "#open-banking-platform"
+  owner_team_ad_group: ad-grp-open-banking
+
+client:
+  client_id: openbanking-tpp-gateway
+  client_name: Example Open Banking TPP Gateway
+  description: Third-party provider gateway requiring high-assurance authentication and PAR.
+  client_uri: https://tpp-gateway.example.com
+  jwks_uri: https://tpp-gateway.example.com/.well-known/jwks.json
+  redirect_uris:
+    - https://tpp-gateway.example.com/oidc/callback
+  initiate_login_uri: https://tpp-gateway.example.com/oidc/login
+  request_uris:
+    - https://tpp-gateway.example.com/oidc/request-object
+  backchannel_logout_uri: https://tpp-gateway.example.com/oidc/backchannel-logout
+  response_types:
+    - code
+  grant_types:
+    - authorization_code
+    - refresh_token
+  token_endpoint_auth_method: private_key_jwt
+  token_endpoint_auth_signing_alg: PS256
+  id_token_signed_response_alg: PS256
+  request_object_signing_alg: PS256
+  scopes:
+    - openid
+    - accounts
+    - payments
+  consent_required: true
+  application_type: web
+  subject_type: pairwise
+  sector_identifier_uri: https://tpp-gateway.example.com/.well-known/sector-identifiers.json
+  default_acr_values:
+    - urn:example:acr:mfa
+  post_logout_redirect_uris:
+    - https://tpp-gateway.example.com/logged-out
+
+extensions:
+  enabled: true
+  pkce_required: true
+  dpop_required: true
+  par_required: true
+  access_token_format: jwt
+  access_token_lifetime_seconds: 180
+  offline_session_max_lifetime_seconds: 86400
+  offline_session_idle_timeout_seconds: 3600
+  rotate_refresh_tokens: true
+  minimum_acr_value: urn:example:acr:mfa
