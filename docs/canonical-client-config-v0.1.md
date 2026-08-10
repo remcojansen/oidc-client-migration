@@ -94,7 +94,7 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `session_idle_timeout_seconds` | integer | Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent. |
 | `rotate_refresh_tokens` | bool | Whether refresh token rotation is enabled. |
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
-| `require_terms_and_conditions_approval` | bool | Whether terms-and-conditions approval is required. |
+| `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. |
 
 ### secrets
 

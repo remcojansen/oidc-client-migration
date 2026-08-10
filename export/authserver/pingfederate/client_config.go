@@ -143,17 +143,17 @@ func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.Canoni
 			RequestURIs:                 c.mapRequestURIs(),
 		},
 		Extensions: oidcconfig.CanonicalClientConfigExtensions{
-			Enabled:                           c.mapEnabled(),
-			PKCERequired:                      c.mapPKCERequired(),
-			DPoPRequired:                      c.mapDPoPRequired(),
-			PARRequired:                       c.mapPARRequired(),
-			AccessTokenFormat:                 c.mapAccessTokenFormat(),
-			AccessTokenLifetimeSeconds:        c.mapAccessTokenLifetimeSeconds(),
-			OfflineSessionMaxLifetimeSeconds:  c.mapOfflineSessionMaxLifetimeSeconds(),
-			OfflineSessionIdleTimeoutSeconds:  c.mapOfflineSessionIdleTimeoutSeconds(),
-			RotateRefreshTokens:               c.mapRotateRefreshTokens(),
-			MinimumACRValue:                   c.mapMinimumACRValue(),
-			RequireTermsAndConditionsApproval: c.mapRequireTermsAndConditionsApproval(),
+			Enabled:                          c.mapEnabled(),
+			PKCERequired:                     c.mapPKCERequired(),
+			DPoPRequired:                     c.mapDPoPRequired(),
+			PARRequired:                      c.mapPARRequired(),
+			AccessTokenFormat:                c.mapAccessTokenFormat(),
+			AccessTokenLifetimeSeconds:       c.mapAccessTokenLifetimeSeconds(),
+			OfflineSessionMaxLifetimeSeconds: c.mapOfflineSessionMaxLifetimeSeconds(),
+			OfflineSessionIdleTimeoutSeconds: c.mapOfflineSessionIdleTimeoutSeconds(),
+			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
+			MinimumACRValue:                  c.mapMinimumACRValue(),
+			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
 			EncryptedSecret: c.mapEncryptedSecret(),
@@ -407,7 +407,7 @@ func (c *PingFederateClientConfig) mapMinimumACRValue() string {
 	return c.ExtendedParameters.Enforce2SV.Value[0]
 }
 
-func (c *PingFederateClientConfig) mapRequireTermsAndConditionsApproval() bool {
+func (c *PingFederateClientConfig) mapTermsAndConditionsRequired() bool {
 	if len(c.ExtendedParameters.ExcludeTnC.Value) == 0 {
 		return false
 	}

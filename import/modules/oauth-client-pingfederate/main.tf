@@ -144,7 +144,7 @@ resource "pingfederate_oauth_client" "this" {
   exclusive_scopes = local.scopes
 
   extended_parameters = {
-    exclude_tnc = { values = [try(local.extensions.require_terms_and_conditions_approval, false) ? "false" : "true"] }
+    exclude_tnc = { values = [try(local.extensions.terms_and_conditions_required, false) ? "false" : "true"] }
     enforce_2sv = { values = [try(local.extensions.minimum_acr_value, "")] }
   }
 

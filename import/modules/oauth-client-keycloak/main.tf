@@ -38,7 +38,7 @@ locals {
   consent_required = try(local.client.consent_required, null) == true
   par_required     = try(local.extensions.par_required, null) == true
   dpop_required    = try(local.extensions.dpop_required, null) == true
-  require_tnc      = try(local.extensions.require_terms_and_conditions_approval, null) == true
+  require_tnc      = try(local.extensions.terms_and_conditions_required, null) == true
   pkce_required    = try(local.extensions.pkce_required, null) == true
 
   # Normalize nullable strings used in extra_config and URL toggles.

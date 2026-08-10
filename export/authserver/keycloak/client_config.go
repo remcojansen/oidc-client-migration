@@ -96,19 +96,19 @@ func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalC
 			RequestURIs:                 c.mapRequestURIs(),
 		},
 		Extensions: oidcconfig.CanonicalClientConfigExtensions{
-			Enabled:                           c.mapEnabled(),
-			PKCERequired:                      c.mapPKCERequired(),
-			DPoPRequired:                      c.mapDPoPRequired(),
-			PARRequired:                       c.mapPARRequired(),
-			AccessTokenFormat:                 c.mapAccessTokenFormat(),
-			AccessTokenLifetimeSeconds:        c.mapAccessTokenLifetimeSeconds(),
-			OfflineSessionMaxLifetimeSeconds:  c.mapOfflineSessionMaxLifetimeSeconds(),
-			OfflineSessionIdleTimeoutSeconds:  c.mapOfflineSessionIdleTimeoutSeconds(),
-			SessionMaxLifetimeSeconds:         c.mapSessionMaxLifetimeSeconds(),
-			SessionIdleTimeoutSeconds:         c.mapSessionIdleTimeoutSeconds(),
-			RotateRefreshTokens:               c.mapRotateRefreshTokens(),
-			MinimumACRValue:                   c.mapMinimumACRValue(),
-			RequireTermsAndConditionsApproval: c.mapRequireTermsAndConditionsApproval(),
+			Enabled:                          c.mapEnabled(),
+			PKCERequired:                     c.mapPKCERequired(),
+			DPoPRequired:                     c.mapDPoPRequired(),
+			PARRequired:                      c.mapPARRequired(),
+			AccessTokenFormat:                c.mapAccessTokenFormat(),
+			AccessTokenLifetimeSeconds:       c.mapAccessTokenLifetimeSeconds(),
+			OfflineSessionMaxLifetimeSeconds: c.mapOfflineSessionMaxLifetimeSeconds(),
+			OfflineSessionIdleTimeoutSeconds: c.mapOfflineSessionIdleTimeoutSeconds(),
+			SessionMaxLifetimeSeconds:        c.mapSessionMaxLifetimeSeconds(),
+			SessionIdleTimeoutSeconds:        c.mapSessionIdleTimeoutSeconds(),
+			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
+			MinimumACRValue:                  c.mapMinimumACRValue(),
+			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
 			PlainSecret: c.mapPlainSecret(),
@@ -411,7 +411,7 @@ func (c *KeycloakClientConfig) mapMinimumACRValue() string {
 	return ""
 }
 
-func (c *KeycloakClientConfig) mapRequireTermsAndConditionsApproval() bool {
+func (c *KeycloakClientConfig) mapTermsAndConditionsRequired() bool {
 	// Check attributes for terms and conditions requirement.
 	if val, ok := c.Attributes["require-tnc"]; ok {
 		return val == "true"

@@ -47,7 +47,7 @@ extensions:
   offline_session_max_lifetime_seconds: 1209600
   offline_session_idle_timeout_seconds: 604800
   rotate_refresh_tokens: true
-  require_terms_and_conditions_approval: true
+  terms_and_conditions_required: true
 
 secrets:
   encrypted_secret: "enc:v1:REPLACE_WITH_VAULT_REFERENCE"

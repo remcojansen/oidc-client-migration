@@ -69,7 +69,7 @@ They only round-trip through canonical files if set by hand.
 | `session_idle_timeout_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
 | `rotate_refresh_tokens` | ~ [9] | ❌ | ✅ | ✅ |
 | `minimum_acr_value` | ✅ | ✅ | ✅ | ✅ |
-| `require_terms_and_conditions_approval` | ✅ | ✅ | ✅ | ✅ |
+| `terms_and_conditions_required` | ✅ | ✅ | ✅ | ✅ |
 
 ## `secrets`
 
