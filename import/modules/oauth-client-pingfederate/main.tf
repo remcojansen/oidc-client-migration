@@ -97,10 +97,18 @@ locals {
   )
 
   scopes = try(local.client.scopes, [])
+
+  # Normalize nullable booleans for use in conditions/provider boolean fields.
+  enabled                       = try(local.extensions.enabled, null) != false
+  consent_required              = try(local.client.consent_required, null) != false
+  pkce_required                 = try(local.extensions.pkce_required, null) != false
+  dpop_required                 = try(local.extensions.dpop_required, null) == true
+  par_required                  = try(local.extensions.par_required, null) == true
+  terms_and_conditions_required = try(local.extensions.terms_and_conditions_required, null) != false
 }
 
 resource "pingfederate_oauth_client" "this" {
-  enabled     = try(local.extensions.enabled, true)
+  enabled     = local.enabled
   client_id   = local.client.client_id
   name        = local.client.client_name
   description = try(local.client.description, null)
@@ -115,13 +123,13 @@ resource "pingfederate_oauth_client" "this" {
     jwks_url = try(local.client.jwks_uri, null)
   }
 
-  bypass_approval_page = !try(local.client.consent_required, true)
+  bypass_approval_page = !local.consent_required
   redirect_uris        = try(local.client.redirect_uris, [])
   grant_types          = local.grant_types
 
-  require_proof_key_for_code_exchange   = try(local.extensions.pkce_required, false)
-  require_dpop                          = try(local.extensions.dpop_required, false)
-  require_pushed_authorization_requests = try(local.extensions.par_required, false)
+  require_proof_key_for_code_exchange   = local.pkce_required
+  require_dpop                          = local.dpop_required
+  require_pushed_authorization_requests = local.par_required
 
   default_access_token_manager_ref = {
     id = local.atm_id
@@ -144,9 +152,10 @@ resource "pingfederate_oauth_client" "this" {
   exclusive_scopes = local.scopes
 
   extended_parameters = {
-    exclude_tnc = { values = [try(local.extensions.terms_and_conditions_required, false) ? "false" : "true"] }
+    exclude_tnc = { values = [local.terms_and_conditions_required ? "false" : "true"] }
     enforce_2sv = { values = [try(local.extensions.minimum_acr_value, "")] }
   }
+
 
   # defaults
   allow_authentication_api_init           = false

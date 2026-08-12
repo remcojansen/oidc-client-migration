@@ -129,7 +129,8 @@
                 },
                 "consent_required": {
                     "type": "boolean",
-                    "description": "Whether user consent is required."
+                    "description": "Whether user consent is required.",
+                    "default": true
                 },
                 "application_type": {
                     "type": "string",
@@ -202,19 +203,23 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "description": "Whether the client is enabled in the target authorization server."
+                    "description": "Whether the client is enabled in the target authorization server.",
+                    "default": true
                 },
                 "pkce_required": {
                     "type": "boolean",
-                    "description": "Whether PKCE is required."
+                    "description": "Whether PKCE is required.",
+                    "default": true
                 },
                 "dpop_required": {
                     "type": "boolean",
-                    "description": "Whether DPoP is required."
+                    "description": "Whether DPoP is required.",
+                    "default": false
                 },
                 "par_required": {
                     "type": "boolean",
-                    "description": "Whether pushed authorization requests are required."
+                    "description": "Whether pushed authorization requests are required.",
+                    "default": false
                 },
                 "access_token_format": {
                     "type": "string",
@@ -259,7 +264,8 @@
                 },
                 "terms_and_conditions_required": {
                     "type": "boolean",
-                    "description": "Whether users must approve terms and conditions during consent."
+                    "description": "Whether users must approve terms and conditions during consent.",
+                    "default": true
                 }
             }
         },

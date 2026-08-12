@@ -67,7 +67,7 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `id_token_signed_response_alg` | string | ID token signing algorithm. |
 | `request_object_signing_alg` | string | Request object signing algorithm. |
 | `scopes` | string[] | Scopes associated with the client. |
-| `consent_required` | bool | Whether consent is required. |
+| `consent_required` | bool | Whether consent is required. Defaults to `true` when omitted. |
 | `application_type` | string | `web` or `native`. In this model, `web` is assumed to correspond to a confidential client and `native` is assumed to correspond to a public client. |
 | `subject_type` | string | `public` or `pairwise`. |
 | `sector_identifier_uri` | string | Sector identifier for pairwise subject generation. |
@@ -82,10 +82,10 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `enabled` | bool | Whether the client is enabled in the target authorization server. Required when `extensions` is present. |
-| `pkce_required` | bool | Whether PKCE is required. |
-| `dpop_required` | bool | Whether DPoP is required. |
-| `par_required` | bool | Whether pushed authorization requests are required. |
+| `enabled` | bool | Whether the client is enabled in the target authorization server. Required when `extensions` is present. Defaults to `true` when omitted. |
+| `pkce_required` | bool | Whether PKCE is required. Defaults to `true` when omitted. |
+| `dpop_required` | bool | Whether DPoP is required. Defaults to `false` when omitted. |
+| `par_required` | bool | Whether pushed authorization requests are required. Defaults to `false` when omitted. |
 | `access_token_format` | string | `jwt` or `opaque`. Authorization-server policy, not registration metadata. |
 | `access_token_lifetime_seconds` | integer | Access token lifetime in seconds. |
 | `offline_session_max_lifetime_seconds` | integer | Maximum lifetime, in seconds, of a persistent/offline refresh token — one that must remain usable independently of any browser SSO session (e.g. for native/mobile apps, or backend services refreshing tokens unattended). |
@@ -94,12 +94,14 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `session_idle_timeout_seconds` | integer | Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent. |
 | `rotate_refresh_tokens` | bool | Whether refresh token rotation is enabled. |
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
-| `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. |
+| `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. Defaults to `true` when omitted. |
 
 `consent_required`, `pkce_required`, `dpop_required`, `par_required`, `rotate_refresh_tokens`,
 and `terms_and_conditions_required` are always written out explicitly by `export/` (as `true` or
 `false`), even when `false` — the underlying value is always determinable from the source system,
-so it is never simply left out.
+so it is never simply left out. The defaults noted above apply when these fields are omitted from
+a hand-authored configuration; the `import/` Terraform modules apply them consistently regardless
+of whether the enclosing `client`/`extensions` block is entirely absent or merely missing that field.
 
 ### secrets
 

@@ -35,11 +35,11 @@ locals {
 
   # Normalize nullable booleans for use in conditions/provider boolean fields.
   enabled          = try(local.extensions.enabled, null) != false
-  consent_required = try(local.client.consent_required, null) == true
+  consent_required = try(local.client.consent_required, null) != false
   par_required     = try(local.extensions.par_required, null) == true
   dpop_required    = try(local.extensions.dpop_required, null) == true
-  require_tnc      = try(local.extensions.terms_and_conditions_required, null) == true
-  pkce_required    = try(local.extensions.pkce_required, null) == true
+  require_tnc      = try(local.extensions.terms_and_conditions_required, null) != false
+  pkce_required    = try(local.extensions.pkce_required, null) != false
 
   # Normalize nullable strings used in extra_config and URL toggles.
   frontchannel_logout_uri = try(local.client.frontchannel_logout_uri, null) == null ? "" : local.client.frontchannel_logout_uri
