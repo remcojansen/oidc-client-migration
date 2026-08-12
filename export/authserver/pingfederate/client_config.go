@@ -409,7 +409,7 @@ func (c *PingFederateClientConfig) mapMinimumACRValue() string {
 
 func (c *PingFederateClientConfig) mapTermsAndConditionsRequired() bool {
 	if len(c.ExtendedParameters.ExcludeTnC.Value) == 0 {
-		return false
+		return true
 	}
 	return !contains(c.ExtendedParameters.ExcludeTnC.Value, "true")
 }
