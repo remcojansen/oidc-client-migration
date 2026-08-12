@@ -96,6 +96,11 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
 | `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. |
 
+`consent_required`, `pkce_required`, `dpop_required`, `par_required`, `rotate_refresh_tokens`,
+and `terms_and_conditions_required` are always written out explicitly by `export/` (as `true` or
+`false`), even when `false` — the underlying value is always determinable from the source system,
+so it is never simply left out.
+
 ### secrets
 
 | Field | Type | Notes |

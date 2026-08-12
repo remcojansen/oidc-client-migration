@@ -65,3 +65,29 @@ func TestWriteConfigFile_InvalidOutputDir(t *testing.T) {
 		t.Fatal("expected an error when writing to a non-existent directory, got nil")
 	}
 }
+
+func TestWriteConfigFile_ExplicitFalseBooleanIsNotOmitted(t *testing.T) {
+	// Regression test: consent_required, pkce_required, dpop_required, par_required,
+	// rotate_refresh_tokens, and terms_and_conditions_required must always be serialized,
+	// even when false, rather than being dropped by `omitempty` (which previously made it
+	// impossible to tell "explicitly not required" apart from "not captured at all").
+	dir := t.TempDir()
+	cfg := testConfig()
+	cfg.Client.ConsentRequired = false
+	cfg.Extensions.PKCERequired = false
+
+	if err := cfg.WriteConfigFile(dir, "yaml"); err != nil {
+		t.Fatalf("WriteConfigFile returned error: %v", err)
+	}
+
+	data, err := os.ReadFile(filepath.Join(dir, "my-client.yaml"))
+	if err != nil {
+		t.Fatalf("expected file to exist: %v", err)
+	}
+	if !strings.Contains(string(data), "consent_required: false") {
+		t.Errorf("expected YAML output to contain explicit consent_required: false, got: %s", data)
+	}
+	if !strings.Contains(string(data), "pkce_required: false") {
+		t.Errorf("expected YAML output to contain explicit pkce_required: false, got: %s", data)
+	}
+}
