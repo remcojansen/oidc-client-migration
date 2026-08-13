@@ -18,6 +18,10 @@
                     "type": "string",
                     "description": "Human owner contact email address."
                 },
+                "owner_team": {
+                    "type": "string",
+                    "description": "Human-readable name of the owning team or stakeholder."
+                },
                 "owner_slack_channel": {
                     "type": "string",
                     "description": "Slack channel used for operational ownership."
