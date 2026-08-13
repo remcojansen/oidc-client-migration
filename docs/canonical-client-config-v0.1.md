@@ -43,6 +43,7 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | Field | Type | Notes |
 | --- | --- | --- |
 | `owner_email` | string | Human owner contact address. |
+| `owner_team` | string | Human-readable name of the owning team or stakeholder. |
 | `owner_slack_channel` | string | Operational contact channel. |
 | `owner_team_ad_group` | string | Owning team directory group. |
 

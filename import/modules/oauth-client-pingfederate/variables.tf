@@ -3,6 +3,7 @@ variable "config" {
   type = object({
     metadata = optional(object({
       owner_email         = optional(string)
+      owner_team          = optional(string)
       owner_slack_channel = optional(string)
       owner_team_ad_group = optional(string)
     }))

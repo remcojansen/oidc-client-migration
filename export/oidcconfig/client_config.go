@@ -18,6 +18,7 @@ type CanonicalClientConfig struct {
 type CanonicalClientConfigMetadata struct {
 	// Metadata fields for tracking client configuration source, owner, etc.
 	OwnerEmail        string `json:"owner_email,omitempty" yaml:"owner_email,omitempty"`
+	OwnerTeam         string `json:"owner_team,omitempty" yaml:"owner_team,omitempty"`
 	OwnerSlackChannel string `json:"owner_slack_channel,omitempty" yaml:"owner_slack_channel,omitempty"`
 	OwnerTeamADGroup  string `json:"owner_team_ad_group,omitempty" yaml:"owner_team_ad_group,omitempty"`
 }
