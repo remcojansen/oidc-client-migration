@@ -69,6 +69,7 @@ type CanonicalClientConfigExtensions struct {
 	RotateRefreshTokens              bool   `json:"rotate_refresh_tokens" yaml:"rotate_refresh_tokens"`
 	MinimumACRValue                  string `json:"minimum_acr_value,omitempty" yaml:"minimum_acr_value,omitempty"`     // minimum ACR values to be used regardless of the requested ACR values in the authorization request
 	TermsAndConditionsRequired       bool   `json:"terms_and_conditions_required" yaml:"terms_and_conditions_required"` // prompt users to accept authorization server's terms and conditions
+	IntrospectionEnabled             bool   `json:"introspection_enabled" yaml:"introspection_enabled"`                 // whether the client may call the token introspection endpoint (RFC 7662); default: true
 }
 
 type CanonicalClientConfigSecrets struct {

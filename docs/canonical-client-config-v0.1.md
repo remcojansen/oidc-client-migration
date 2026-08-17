@@ -62,7 +62,7 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `jwks_uri` | string | Client JWKS endpoint. |
 | `redirect_uris` | string[] | Allowed redirect URIs. |
 | `response_types` | string[] | OAuth/OIDC response types such as `code` or `token id_token`. |
-| `grant_types` | string[] | Supported grant types. |
+| `grant_types` | string[] | Supported grant types, restricted to the exact identifiers registered by the relevant OAuth 2.0 RFCs: `authorization_code`, `implicit`, `client_credentials`, `password`, `refresh_token` (RFC 6749); `urn:ietf:params:oauth:grant-type:device_code` (RFC 8628); `urn:ietf:params:oauth:grant-type:token-exchange` (RFC 8693). Note: `implicit` is not an actual `grant_type` wire value (the implicit flow never sends one), but is included here as the conventional label for that RFC 6749 grant type. |
 | `token_endpoint_auth_method` | string | Client auth method such as `client_secret_basic`, `client_secret_jwt`, `private_key_jwt`, or `none`. |
 | `token_endpoint_auth_signing_alg` | string | Signing algorithm for assertion-based client auth. |
 | `id_token_signed_response_alg` | string | ID token signing algorithm. |
@@ -96,6 +96,7 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `rotate_refresh_tokens` | bool | Whether refresh token rotation is enabled. |
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
 | `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. Defaults to `true` when omitted. |
+| `introspection_enabled` | bool | Whether the client is authorized to call the authorization server's token introspection endpoint ([RFC 7662](https://www.rfc-editor.org/rfc/rfc7662)) to validate tokens. Defaults to `true` when omitted. |
 
 `consent_required`, `pkce_required`, `dpop_required`, `par_required`, `rotate_refresh_tokens`,
 and `terms_and_conditions_required` are always written out explicitly by `export/` (as `true` or

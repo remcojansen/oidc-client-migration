@@ -154,6 +154,7 @@ func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.Canoni
 			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
 			MinimumACRValue:                  c.mapMinimumACRValue(),
 			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
+			IntrospectionEnabled:             c.mapIntrospectionEnabled(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
 			EncryptedSecret: c.mapEncryptedSecret(),
@@ -240,11 +241,16 @@ func (c *PingFederateClientConfig) mapGrantTypes() []string {
 			g = append(g, authserver.GrantTypeDeviceCode)
 		case "TOKEN_EXCHANGE":
 			g = append(g, authserver.GrantTypeTokenExchange)
-		case "ACCESS_TOKEN_VALIDATION":
-			g = append(g, authserver.GrantTypeAccessTokenValidation)
 		}
 	}
 	return g
+}
+
+// mapIntrospectionEnabled maps PingFederate's ACCESS_TOKEN_VALIDATION grant type. It is not a
+// real OAuth grant type, so it is surfaced as extensions.introspection_enabled instead of being
+// included in GrantTypes.
+func (c *PingFederateClientConfig) mapIntrospectionEnabled() bool {
+	return contains(c.GrantTypes, "ACCESS_TOKEN_VALIDATION")
 }
 
 func (cc *PingFederateClientConfig) mapTokenEndpointAuthMethod() string {
