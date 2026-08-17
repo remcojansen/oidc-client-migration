@@ -52,6 +52,7 @@ variable "config" {
       rotate_refresh_tokens                = optional(bool)
       minimum_acr_value                    = optional(string)
       terms_and_conditions_required        = optional(bool)
+      introspection_enabled                = optional(bool)
     }))
 
     secrets = optional(object({

@@ -109,6 +109,7 @@ func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalC
 			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
 			MinimumACRValue:                  c.mapMinimumACRValue(),
 			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
+			IntrospectionEnabled:             c.mapIntrospectionEnabled(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
 			PlainSecret: c.mapPlainSecret(),
@@ -417,6 +418,12 @@ func (c *KeycloakClientConfig) mapTermsAndConditionsRequired() bool {
 		return val == "true"
 	}
 	return false
+}
+
+func (c *KeycloakClientConfig) mapIntrospectionEnabled() bool {
+	// Keycloak has no per-client toggle for introspection: any client that can authenticate
+	// itself may call the introspection endpoint, so this is always true.
+	return true
 }
 
 func (c *KeycloakClientConfig) mapPlainSecret() string {

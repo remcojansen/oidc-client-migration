@@ -12,7 +12,7 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		Name:         "My Client",
 		Enabled:      true,
 		RedirectUris: []string{"https://app.example.com/callback"},
-		GrantTypes:   []string{"AUTHORIZATION_CODE", "REFRESH_TOKEN", "CLIENT_CREDENTIALS"},
+		GrantTypes:   []string{"AUTHORIZATION_CODE", "REFRESH_TOKEN", "CLIENT_CREDENTIALS", "DEVICE_CODE", "ACCESS_TOKEN_VALIDATION"},
 		ClientAuth: AuthConfig{
 			Type:            "SECRET",
 			EncryptedSecret: "enc-s3cr3t",
@@ -34,9 +34,14 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		authserver.GrantTypeAuthorizationCode,
 		authserver.GrantTypeRefreshToken,
 		authserver.GrantTypeClientCredentials,
+		authserver.GrantTypeDeviceCode,
 	}
 	if !reflect.DeepEqual(canonical.Client.GrantTypes, wantGrantTypes) {
 		t.Errorf("GrantTypes = %v, want %v", canonical.Client.GrantTypes, wantGrantTypes)
+	}
+
+	if !canonical.Extensions.IntrospectionEnabled {
+		t.Error("expected IntrospectionEnabled to be true when ACCESS_TOKEN_VALIDATION is present")
 	}
 
 	if canonical.Client.TokenEndpointAuthMethod != authserver.AuthMethodClientSecretBasic {
@@ -57,6 +62,15 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 
 	if canonical.Secrets.EncryptedSecret != "enc-s3cr3t" {
 		t.Errorf("EncryptedSecret = %q, want %q", canonical.Secrets.EncryptedSecret, "enc-s3cr3t")
+	}
+}
+
+func TestMapIntrospectionEnabledFalseWhenAbsent(t *testing.T) {
+	cfg := &PingFederateClientConfig{
+		GrantTypes: []string{"AUTHORIZATION_CODE"},
+	}
+	if cfg.mapIntrospectionEnabled() {
+		t.Error("expected IntrospectionEnabled to be false when ACCESS_TOKEN_VALIDATION is absent")
 	}
 }
 

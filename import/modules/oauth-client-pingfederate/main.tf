@@ -37,14 +37,16 @@ locals {
     "password"                                        = "RESOURCE_OWNER_PASSWORD_CREDENTIALS"
     "client_credentials"                              = "CLIENT_CREDENTIALS"
     "refresh_token"                                   = "REFRESH_TOKEN"
-    "device_code"                                     = "DEVICE_CODE"
-    "introspect"                                      = "ACCESS_TOKEN_VALIDATION"
+    "urn:ietf:params:oauth:grant-type:device_code"    = "DEVICE_CODE"
     "urn:ietf:params:oauth:grant-type:token-exchange" = "TOKEN_EXCHANGE"
   }
 
-  grant_types = [
-    for gt in try(local.client.grant_types, []) : lookup(local.grant_type_mapping, gt, local.grant_type_invalid_sentinel)
-  ]
+  grant_types = concat(
+    [
+      for gt in try(local.client.grant_types, []) : lookup(local.grant_type_mapping, gt, local.grant_type_invalid_sentinel)
+    ],
+    try(local.extensions.introspection_enabled, true) ? ["ACCESS_TOKEN_VALIDATION"] : []
+  )
 
   # Sentinel value used to detect a grant type with no PingFederate equivalent; checked by the
   # resource's lifecycle.precondition below so the failure surfaces with a clear message instead

@@ -108,6 +108,13 @@ func TestMapGrantTypes_DeviceCodeNotEnabled(t *testing.T) {
 	}
 }
 
+func TestMapIntrospectionEnabled_AlwaysTrue(t *testing.T) {
+	cfg := &KeycloakClientConfig{}
+	if !cfg.mapIntrospectionEnabled() {
+		t.Error("expected mapIntrospectionEnabled() to always be true for Keycloak")
+	}
+}
+
 func TestMapOfflineSessionMaxLifetimeSeconds(t *testing.T) {
 	cfg := &KeycloakClientConfig{
 		Attributes: map[string]string{

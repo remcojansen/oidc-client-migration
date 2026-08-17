@@ -103,9 +103,18 @@
                 },
                 "grant_types": {
                     "type": "array",
-                    "description": "Supported grant types such as authorization_code, refresh_token, client_credentials, password, device_code, or token_exchange.",
+                    "description": "Supported grant types, using the exact identifiers registered by the relevant OAuth 2.0 RFCs (RFC 6749, RFC 8628, RFC 8693).",
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                            "authorization_code",
+                            "implicit",
+                            "client_credentials",
+                            "password",
+                            "refresh_token",
+                            "urn:ietf:params:oauth:grant-type:device_code",
+                            "urn:ietf:params:oauth:grant-type:token-exchange"
+                        ]
                     }
                 },
                 "token_endpoint_auth_method": {
@@ -269,6 +278,11 @@
                 "terms_and_conditions_required": {
                     "type": "boolean",
                     "description": "Whether users must approve terms and conditions during consent.",
+                    "default": true
+                },
+                "introspection_enabled": {
+                    "type": "boolean",
+                    "description": "Whether the client is authorized to call the authorization server's token introspection endpoint (RFC 7662) to validate tokens.",
                     "default": true
                 }
             }

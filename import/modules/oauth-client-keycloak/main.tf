@@ -12,6 +12,7 @@
 # - client.subject_type --> Unsupported
 # - extensions.rotate_refresh_tokens --> Unsupported
 # - extensions.access_token_format --> Support for lightweight access tokens intended for later
+# - extensions.introspection_enabled --> Unsupported; no per-client toggle in Keycloak
 
 locals {
   # Define which scopes should be available to all clients by default;
@@ -111,7 +112,7 @@ resource "keycloak_openid_client" "this" {
   implicit_flow_enabled                     = contains(local.grant_types, "implicit")
   direct_access_grants_enabled              = contains(local.grant_types, "password")
   service_accounts_enabled                  = contains(local.grant_types, "client_credentials")
-  oauth2_device_authorization_grant_enabled = contains(local.grant_types, "device_code")
+  oauth2_device_authorization_grant_enabled = contains(local.grant_types, "urn:ietf:params:oauth:grant-type:device_code")
   standard_token_exchange_enabled           = contains(local.grant_types, "urn:ietf:params:oauth:grant-type:token-exchange")
   use_refresh_tokens                        = contains(local.grant_types, "refresh_token")
 
