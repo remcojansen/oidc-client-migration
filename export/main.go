@@ -28,6 +28,14 @@ func parseAccessTokenManagerMapping(raw string) (map[string]pingfederate.AccessT
 	if err := json.Unmarshal([]byte(raw), &mapping); err != nil {
 		return nil, err
 	}
+	for id, info := range mapping {
+		if info.Format != authserver.AccessTokenFormatJwt && info.Format != authserver.AccessTokenFormatOpaque {
+			return nil, fmt.Errorf("invalid access token manager mapping for %q: unsupported format %q", id, info.Format)
+		}
+		if info.LifetimeSeconds <= 0 {
+			return nil, fmt.Errorf("invalid access token manager mapping for %q: lifetime_seconds must be > 0 (got %d)", id, info.LifetimeSeconds)
+		}
+	}
 	return mapping, nil
 }
 
