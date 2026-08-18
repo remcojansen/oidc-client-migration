@@ -61,6 +61,19 @@ export AUTH_SERVER_ACCESS_TOKEN=$(curl -d "client_id=admin-cli" \
 
 Set `AUTH_SERVER_USERNAME` and `AUTH_SERVER_PASSWORD` for the PingFederate admin API.
 
+PingFederate has no per-client access token format/lifetime fields — these are approximated by
+selecting one of the deployment's preconfigured access token managers. Set
+`AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP` to a JSON object mapping your PingFederate access token
+manager IDs to their format/lifetime, so the exporter can resolve
+`extensions.access_token_format`/`extensions.access_token_lifetime_seconds`, e.g.:
+
+```bash
+export AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP='{
+  "my-jwt-manager-short": {"format": "jwt", "lifetime_seconds": 300},
+  "my-jwt-manager-long": {"format": "jwt", "lifetime_seconds": 1800}
+}'
+```
+
 ## Next step
 
 Once configurations are exported to `client-configurations/`, use the

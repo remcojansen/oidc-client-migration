@@ -16,6 +16,7 @@ passed as command-line flags or committed to a config file).
 | `AUTH_SERVER_ACCESS_TOKEN` | Keycloak | Yes (Keycloak only) | A valid access token for the Keycloak admin API. See [exporting.md](exporting.md#keycloak) for how to fetch one. |
 | `AUTH_SERVER_USERNAME` | PingFederate | Yes (PingFederate only) | Username for the PingFederate admin API. |
 | `AUTH_SERVER_PASSWORD` | PingFederate | Yes (PingFederate only) | Password for the PingFederate admin API. |
+| `AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP` | PingFederate | No (default empty), required to populate `extensions.access_token_format`/`extensions.access_token_lifetime_seconds` | JSON object mapping PingFederate access token manager IDs to their format/lifetime, e.g. `{"my-jwt-manager-short": {"format": "jwt", "lifetime_seconds": 300}}`. Access token managers are user-created, deployment-specific resources with no universal naming convention, so this must be supplied per-deployment. |
 
 ## Import tool (`import/`, Terraform)
 
@@ -54,3 +55,4 @@ to `import/terraform.tfvars` (gitignored) as a starting point.
 | Keycloak realm | `keycloak_realm_id` | Yes | ID of the realm where Keycloak clients will be created. |
 | PingFederate provisioning toggle | `pingfederate_enabled` | No (default `false`) | Enables/disables PingFederate client provisioning. |
 | Keycloak provisioning toggle | `keycloak_enabled` | No (default `false`) | Enables/disables Keycloak client provisioning. |
+| PingFederate access token manager mapping | `pingfederate_access_token_manager_mapping` | No (default `{}`), but required when `pingfederate_enabled` is `true` | Maps `extensions.access_token_format` (`jwt`/`opaque`) and `extensions.access_token_lifetime_seconds` to this PingFederate deployment's access token manager IDs. Access token managers are user-created resources with no universal naming convention, so this must be supplied per-deployment (see `terraform.tfvars.example`). |

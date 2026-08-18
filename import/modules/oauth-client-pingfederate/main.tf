@@ -21,6 +21,10 @@
 #   persistent grant lifetime applies unconditionally, so it is only represented by
 #   extensions.offline_session_max_lifetime_seconds)
 # - extensions.session_idle_timeout_seconds --> Unsupported (see above)
+#
+# extensions.access_token_format / extensions.access_token_lifetime_seconds are resolved to a
+# PingFederate access token manager ID via var.access_token_manager_mapping, since access token
+# managers are user-created, deployment-specific resources with no universal naming convention.
 
 locals {
   # Define which scopes are "common" and hence available to all clients by default;
@@ -57,25 +61,13 @@ locals {
     for gt in try(local.client.grant_types, []) : gt if !contains(keys(local.grant_type_mapping), gt)
   ]
 
-  access_token_manager_mapping = {
-    "opaque" = {
-      300 = "refstandardshort"
-      # TODO: verify opaque manager id for non-default access token lifetimes.
-    }
-    "jwt" = {
-      300  = "jwtstandardshort"
-      1800 = "jwtstandardlong"
-      # TODO: verify JWT manager ids for non-default access token lifetimes.
-    }
-  }
-
   access_token_lifetime_seconds = try(local.extensions.access_token_lifetime_seconds, 300)
 
   refresh_token_lifetime_minutes     = max(1, ceil(try(local.extensions.offline_session_max_lifetime_seconds, 0) / 60))
   refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.offline_session_idle_timeout_seconds, 0) / 60))
 
   atm_id = lookup(
-    lookup(local.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
+    lookup(var.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
     local.access_token_lifetime_seconds,
     local.atm_id_invalid_sentinel
   )
@@ -183,7 +175,7 @@ resource "pingfederate_oauth_client" "this" {
   lifecycle {
     precondition {
       condition     = local.atm_id != local.atm_id_invalid_sentinel
-      error_message = "Unsupported access_token_format/access_token_lifetime_seconds combination: ${try(local.extensions.access_token_format, "jwt")}/${local.access_token_lifetime_seconds}. Supported combinations: ${jsonencode(local.access_token_manager_mapping)}."
+      error_message = "Unsupported access_token_format/access_token_lifetime_seconds combination: ${try(local.extensions.access_token_format, "jwt")}/${local.access_token_lifetime_seconds}. Supported combinations: ${jsonencode(var.access_token_manager_mapping)}."
     }
     precondition {
       condition     = !contains(local.grant_types, local.grant_type_invalid_sentinel)

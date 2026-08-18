@@ -17,3 +17,15 @@ keycloak_realm_id = ""
 
 pingfederate_enabled = false
 keycloak_enabled     = false
+
+# Maps extensions.access_token_format ("jwt" or "opaque") and extensions.access_token_lifetime_seconds
+# to this PingFederate deployment's access token manager IDs (only needed when pingfederate_enabled = true).
+# pingfederate_access_token_manager_mapping = {
+#   jwt = {
+#     300  = "my-jwt-manager-short"
+#     1800 = "my-jwt-manager-long"
+#   }
+#   opaque = {
+#     300 = "my-opaque-manager-short"
+#   }
+# }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"ocm/export/authserver"
 	"ocm/export/oidcconfig"
-	"strings"
 )
 
 // PingFederateRefreshRollingDefault is PingFederate's server-default refresh-token rotation setting.
@@ -52,6 +51,19 @@ type PingFederateClientConfig struct {
 	PersistentGrantExpirationTime      int                `json:"persistentGrantExpirationTime"`
 	PersistentGrantExpirationTimeUnit  string             `json:"persistentGrantExpirationTimeUnit"`
 	// Other fields are omitted as they are unused in our mapping
+
+	// accessTokenManagerMapping maps DefaultAccessTokenManagerRef.Id to its format/lifetime; it is
+	// injected by the client (see PingFederateClient.WithAccessTokenManagerMapping) rather than
+	// read from the PingFederate API response.
+	accessTokenManagerMapping map[string]AccessTokenManagerInfo
+}
+
+// AccessTokenManagerInfo describes the access token format and lifetime produced by a specific
+// PingFederate access token manager, as configured by the caller via
+// PingFederateClient.WithAccessTokenManagerMapping.
+type AccessTokenManagerInfo struct {
+	Format          string `json:"format"`
+	LifetimeSeconds int    `json:"lifetime_seconds"`
 }
 
 type PingFederateClientList struct {
@@ -371,17 +383,17 @@ func (c *PingFederateClientConfig) mapRotateRefreshTokens() bool {
 }
 
 func (c *PingFederateClientConfig) mapAccessTokenFormat() string {
-	if strings.HasPrefix(c.DefaultAccessTokenManagerRef.Id, "jwt") {
-		return authserver.AccessTokenFormatJwt
+	if info, ok := c.accessTokenManagerMapping[c.DefaultAccessTokenManagerRef.Id]; ok {
+		return info.Format
 	}
-	return authserver.AccessTokenFormatOpaque
+	return ""
 }
 
 func (c *PingFederateClientConfig) mapAccessTokenLifetimeSeconds() int {
-	if strings.HasSuffix(c.DefaultAccessTokenManagerRef.Id, "long") {
-		return authserver.AccessTokenLifetimeLong
+	if info, ok := c.accessTokenManagerMapping[c.DefaultAccessTokenManagerRef.Id]; ok {
+		return info.LifetimeSeconds
 	}
-	return authserver.AccessTokenLifetimeShort
+	return authserver.AccessTokenLifetimeDefault
 }
 
 func (c *PingFederateClientConfig) mapOfflineSessionMaxLifetimeSeconds() int {

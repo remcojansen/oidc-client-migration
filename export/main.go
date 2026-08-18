@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -14,6 +15,29 @@ const (
 	ExitError = 1
 	ExitOK    = 0
 )
+
+// parseAccessTokenManagerMapping parses AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP, a JSON object
+// mapping PingFederate access token manager IDs to their format/lifetime, e.g.
+// {"my-jwt-manager-short": {"format": "jwt", "lifetime_seconds": 300}}. An empty string is treated
+// as an empty mapping (no access token managers known).
+func parseAccessTokenManagerMapping(raw string) (map[string]pingfederate.AccessTokenManagerInfo, error) {
+	if raw == "" {
+		return map[string]pingfederate.AccessTokenManagerInfo{}, nil
+	}
+	var mapping map[string]pingfederate.AccessTokenManagerInfo
+	if err := json.Unmarshal([]byte(raw), &mapping); err != nil {
+		return nil, err
+	}
+	for id, info := range mapping {
+		if info.Format != authserver.AccessTokenFormatJwt && info.Format != authserver.AccessTokenFormatOpaque {
+			return nil, fmt.Errorf("invalid access token manager mapping for %q: unsupported format %q", id, info.Format)
+		}
+		if info.LifetimeSeconds <= 0 {
+			return nil, fmt.Errorf("invalid access token manager mapping for %q: lifetime_seconds must be > 0 (got %d)", id, info.LifetimeSeconds)
+		}
+	}
+	return mapping, nil
+}
 
 func main() {
 	var sourceSystem, outputDir, format, clientId string
@@ -36,7 +60,12 @@ func main() {
 	var c authserver.AuthServerClient
 	switch sourceSystem {
 	case "pingfederate":
+		atmMapping, err := parseAccessTokenManagerMapping(os.Getenv("AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP"))
+		if err != nil {
+			log.Fatalf("Failed to parse AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP: %v\n", err)
+		}
 		c = pingfederate.CreatePingFederateClient().
+			WithAccessTokenManagerMapping(atmMapping).
 			WithBaseURL(os.Getenv("AUTH_SERVER_BASE_URL")).
 			WithUsernamePassword(os.Getenv("AUTH_SERVER_USERNAME"), os.Getenv("AUTH_SERVER_PASSWORD")).
 			WithVerbose(verbose)
