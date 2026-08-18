@@ -9,7 +9,8 @@ module "pingfederate-client" {
   source   = "./modules/oauth-client-pingfederate"
   for_each = var.pingfederate_enabled ? local.client_configs : {}
 
-  config = each.value
+  config                       = each.value
+  access_token_manager_mapping = var.pingfederate_access_token_manager_mapping
 }
 
 module "keycloak-client" {

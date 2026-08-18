@@ -60,3 +60,9 @@ variable "config" {
     }))
   })
 }
+
+variable "access_token_manager_mapping" {
+  description = "Maps extensions.access_token_format (\"jwt\" or \"opaque\") and extensions.access_token_lifetime_seconds to this PingFederate deployment's access token manager IDs. PingFederate access token managers are user-created resources with no universal naming convention, so this must be supplied per-deployment. Example: { jwt = { 300 = \"my-jwt-manager-short\", 1800 = \"my-jwt-manager-long\" }, opaque = { 300 = \"my-opaque-manager-short\" } }."
+  type        = map(map(string))
+  default     = {}
+}

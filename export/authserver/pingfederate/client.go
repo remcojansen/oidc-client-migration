@@ -12,9 +12,10 @@ import (
 )
 
 type PingFederateClient struct {
-	apiURL string
-	client *http.Client
-	header *http.Header
+	apiURL                    string
+	client                    *http.Client
+	header                    *http.Header
+	accessTokenManagerMapping map[string]AccessTokenManagerInfo
 }
 
 func CreatePingFederateClient() *PingFederateClient {
@@ -31,6 +32,15 @@ func CreatePingFederateClient() *PingFederateClient {
 	}
 	c.header.Set("X-XSRF-Header", "PingFederate")
 	c.header.Set("Accept", "application/json")
+	return c
+}
+
+// WithAccessTokenManagerMapping configures the access token manager ID -> format/lifetime mapping,
+// since access token managers are user-created, deployment-specific resources. This is
+// PingFederate-specific and not part of the authserver.AuthServerClient interface, so it must be
+// called first in the builder chain, before any other With... call.
+func (c *PingFederateClient) WithAccessTokenManagerMapping(mapping map[string]AccessTokenManagerInfo) *PingFederateClient {
+	c.accessTokenManagerMapping = mapping
 	return c
 }
 
@@ -86,6 +96,7 @@ func (c *PingFederateClient) FetchClientConfigurations() ([]authserver.OAuthClie
 
 	oauthClients := make([]authserver.OAuthClientConfig, len(clientList.Items))
 	for i := range clientList.Items {
+		clientList.Items[i].accessTokenManagerMapping = c.accessTokenManagerMapping
 		oauthClients[i] = &clientList.Items[i]
 	}
 
@@ -119,6 +130,7 @@ func (c *PingFederateClient) FetchClientConfigurationByClientId(clientId string)
 	if err := json.NewDecoder(resp.Body).Decode(&client); err != nil {
 		return nil, err
 	}
+	client.accessTokenManagerMapping = c.accessTokenManagerMapping
 
 	return &client, nil
 }

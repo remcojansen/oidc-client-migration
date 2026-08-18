@@ -95,9 +95,10 @@ They only round-trip through canonical files if set by hand.
 7. **`access_token_format` (Keycloak import)**: reserved for future support of lightweight/opaque
    access tokens; currently not applied to the provisioned client.
 8. **`access_token_format` / `access_token_lifetime_seconds` (PingFederate)**: PingFederate has no
-   per-client format/lifetime fields — both are approximated by selecting one of a small,
-   preconfigured set of access token managers (e.g. `jwtstandardshort` = JWT/300s,
-   `jwtstandardlong` = JWT/1800s), so only those discrete combinations round-trip faithfully.
+   per-client format/lifetime fields — both are approximated by selecting one of the deployment's
+   preconfigured access token managers, resolved via a deployment-specific format/lifetime-to-manager-ID
+   mapping (see `pingfederate_access_token_manager_mapping` in [configuration.md](configuration.md)),
+   so only the combinations present in that mapping round-trip faithfully.
 9. **`rotate_refresh_tokens` (Keycloak export)**: Keycloak has no native "rotate refresh tokens"
    toggle; approximated as `true` whenever refresh tokens are in use at all.
 10. **`offline_session_max_lifetime_seconds` / `offline_session_idle_timeout_seconds` (Keycloak

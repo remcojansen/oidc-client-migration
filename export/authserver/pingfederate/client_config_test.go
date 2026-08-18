@@ -22,6 +22,9 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		PersistentGrantExpirationType:     "OVERRIDE_SERVER_DEFAULT",
 		PersistentGrantExpirationTime:     2,
 		PersistentGrantExpirationTimeUnit: "HOURS",
+		accessTokenManagerMapping: map[string]AccessTokenManagerInfo{
+			"jwt-long": {Format: authserver.AccessTokenFormatJwt, LifetimeSeconds: authserver.AccessTokenLifetimeLong},
+		},
 	}
 
 	canonical := cfg.GetCanonicalClientConfig()
