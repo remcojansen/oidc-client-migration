@@ -18,7 +18,7 @@ keycloak_realm_id = ""
 pingfederate_enabled = false
 keycloak_enabled     = false
 
-# Maps extensions.access_token_format ("jwt" or "opaque") and extensions.access_token_lifetime_seconds
+# Maps client.access_token_format ("jwt" or "opaque") and client.access_token_lifetime_seconds
 # to this PingFederate deployment's access token manager IDs (only needed when pingfederate_enabled = true).
 # pingfederate_access_token_manager_mapping = {
 #   jwt = {
@@ -30,5 +30,5 @@ keycloak_enabled     = false
 #   }
 # }
 
-# Name of the PingFederate Extended Parameter storing extensions.minimum_acr_value.
+# Name of the PingFederate Extended Parameter storing client.minimum_acr_value.
 # pingfederate_minimum_acr_value_param_name = "minimum_acr_value"

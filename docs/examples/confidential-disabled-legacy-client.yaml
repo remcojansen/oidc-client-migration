@@ -1,5 +1,5 @@
 # Legacy confidential web client kept disabled pending decommission. Demonstrates
-# `extensions.enabled: false` and the `client_secret_post` auth method, plus the
+# `client.enabled: false` and the `client_secret_post` auth method, plus the
 # (insecure) plain_secret field for a low-value, already-scheduled-for-retirement client.
 
 annotations:

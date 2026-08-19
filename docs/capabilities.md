@@ -46,7 +46,7 @@ provisioned to a target system. They only round-trip through canonical files if 
 | `offline_session_idle_timeout_seconds` | ✅ | ✅ [10] | ✅ | ✅ |
 | `session_max_lifetime_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
 | `session_idle_timeout_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
-| `introspection_enabled` | ✅ | n/a [13] | ✅ | n/a [13] |
+| `introspection_enabled` | ✅ | ❌ [13] | ✅ | ✅ |
 | `minimum_acr_value` | ✅ | ✅ | ~ [14] | ~ [14] |
 | `default_acr_values` | ✅ | ✅ | ❌ | ❌ |
 | `subject_type` | ❌ [5] | ❌ | ✅ | ✅ |
@@ -109,9 +109,9 @@ provisioned to a target system. They only round-trip through canonical files if 
     `access_type` defaults to `CONFIDENTIAL` unless `application_type` is explicitly `native`, to
     avoid accidentally provisioning an intended confidential client as public when the field is
     left unset.
-13. **`introspection_enabled` (import, both systems)**: not consumed by either Terraform module.
-    Keycloak has no per-client toggle (any authenticating client may call introspection);
-    PingFederate's mapping is expressed as the `ACCESS_TOKEN_VALIDATION` grant type instead.
+13. **`introspection_enabled` (Keycloak import)**: not consumed by the Keycloak module — Keycloak
+    has no per-client toggle (any authenticating client may call introspection). PingFederate
+    import does consume it: it's converted to the `ACCESS_TOKEN_VALIDATION` grant type.
 14. **`minimum_acr_value` (PingFederate export/import)**: PingFederate has no native concept for
     this; both directions depend on a deployment-chosen Extended Parameter (name configurable via
     `AUTH_SERVER_MINIMUM_ACR_VALUE_PARAM_NAME` on export and

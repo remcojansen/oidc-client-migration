@@ -18,4 +18,4 @@ secret values are placeholders and must be replaced before real use.
 | `public-device-code-smarttv.yaml` | Smart-TV app using the device authorization grant. |
 | `confidential-high-assurance-par-dpop.yaml` | High-assurance client requiring PAR, PKCE, DPoP, pairwise subjects, and step-up ACR. |
 | `confidential-token-exchange-gateway.yaml` | Internal API gateway using RFC 8693 token exchange with opaque access tokens. |
-| `confidential-disabled-legacy-client.yaml` | Deprecated client disabled at the authorization server (`extensions.enabled: false`). |
+| `confidential-disabled-legacy-client.yaml` | Deprecated client disabled at the authorization server (`client.enabled: false`). |
