@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "canonical-client-config-v0.1.schema.json",
     "title": "Canonical OIDC Client Configuration v0.1",
-    "description": "Canonical model for exporting OIDC/OAuth client configurations from PingFederate and Keycloak, and for provisioning them back through Terraform/OpenTofu. The model intentionally combines standard registration metadata with project-specific deployment extensions.",
+    "description": "Canonical model for exporting OIDC/OAuth client configurations from PingFederate and Keycloak, and for provisioning them back through Terraform/OpenTofu. The client block combines standard OAuth 2.0/OIDC registration data with authorization-server policy and provisioning fields that have no RFC definition.",
     "type": "object",
     "additionalProperties": false,
     "required": [
@@ -39,7 +39,7 @@
                 "client_id",
                 "client_name"
             ],
-            "description": "Standards-oriented OAuth 2.0 / OpenID Connect client registration data.",
+            "description": "OAuth 2.0 / OpenID Connect client configuration, combining standard registration fields with project-specific authorization-server policy and provisioning fields. See docs/canonical-client-config-v0.1.md for which fields are RFC-defined.",
             "properties": {
                 "client_id": {
                     "type": "string",
@@ -53,53 +53,22 @@
                     "type": "string",
                     "description": "Human-readable description of the client."
                 },
-                "contacts": {
-                    "type": "array",
-                    "description": "Registration contacts as email addresses.",
-                    "items": {
-                        "type": "string",
-                        "format": "email"
-                    }
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether the client is enabled in the target authorization server.",
+                    "default": true
                 },
-                "client_uri": {
+                "application_type": {
                     "type": "string",
-                    "format": "uri",
-                    "description": "Client home page or information URI."
+                    "enum": [
+                        "web",
+                        "native"
+                    ],
+                    "description": "Application type. web and native are OIDC standard values. In this model, web is assumed to correspond to a confidential client and native is assumed to correspond to a public client."
                 },
-                "logo_uri": {
+                "token_endpoint_auth_method": {
                     "type": "string",
-                    "format": "uri",
-                    "description": "URI of a logo representing the client."
-                },
-                "tos_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Terms-of-service URI."
-                },
-                "policy_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Privacy policy or security policy URI."
-                },
-                "jwks_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "URI of the client's JSON Web Key Set."
-                },
-                "redirect_uris": {
-                    "type": "array",
-                    "description": "Allowed redirect URIs.",
-                    "items": {
-                        "type": "string",
-                        "format": "uri"
-                    }
-                },
-                "response_types": {
-                    "type": "array",
-                    "description": "Supported OAuth/OIDC response types such as code or token id_token.",
-                    "items": {
-                        "type": "string"
-                    }
+                    "description": "Token endpoint authentication method, for example client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt, or none."
                 },
                 "grant_types": {
                     "type": "array",
@@ -117,21 +86,28 @@
                         ]
                     }
                 },
-                "token_endpoint_auth_method": {
-                    "type": "string",
-                    "description": "Token endpoint authentication method, for example client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt, or none."
+                "response_types": {
+                    "type": "array",
+                    "description": "Supported OAuth/OIDC response types such as code or token id_token.",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "token_endpoint_auth_signing_alg": {
-                    "type": "string",
-                    "description": "Signing algorithm for client assertion based token endpoint authentication."
+                "redirect_uris": {
+                    "type": "array",
+                    "description": "Allowed redirect URIs.",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    }
                 },
-                "id_token_signed_response_alg": {
-                    "type": "string",
-                    "description": "Signing algorithm used for ID tokens."
-                },
-                "request_object_signing_alg": {
-                    "type": "string",
-                    "description": "Signing algorithm used for JWT authorization request objects."
+                "post_logout_redirect_uris": {
+                    "type": "array",
+                    "description": "Allowed post-logout redirect URIs.",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    }
                 },
                 "scopes": {
                     "type": "array",
@@ -143,80 +119,6 @@
                 "consent_required": {
                     "type": "boolean",
                     "description": "Whether user consent is required.",
-                    "default": true
-                },
-                "application_type": {
-                    "type": "string",
-                    "enum": [
-                        "web",
-                        "native"
-                    ],
-                    "description": "Application type. web and native are OIDC standard values. In this model, web is assumed to correspond to a confidential client and native is assumed to correspond to a public client."
-                },
-                "subject_type": {
-                    "type": "string",
-                    "enum": [
-                        "public",
-                        "pairwise"
-                    ],
-                    "description": "Subject identifier type."
-                },
-                "sector_identifier_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Sector identifier URI used with pairwise subject identifiers."
-                },
-                "backchannel_logout_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Back-channel logout URI."
-                },
-                "frontchannel_logout_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Front-channel logout URI."
-                },
-                "post_logout_redirect_uris": {
-                    "type": "array",
-                    "description": "Allowed post-logout redirect URIs.",
-                    "items": {
-                        "type": "string",
-                        "format": "uri"
-                    }
-                },
-                "default_acr_values": {
-                    "type": "array",
-                    "description": "Default ACR values to apply when none are requested.",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "initiate_login_uri": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "Third-party initiated login URI."
-                },
-                "request_uris": {
-                    "type": "array",
-                    "description": "Allowed request object URIs.",
-                    "items": {
-                        "type": "string",
-                        "format": "uri"
-                    }
-                }
-            }
-        },
-        "extensions": {
-            "type": "object",
-            "additionalProperties": false,
-            "description": "Project-specific authorization-server policy and provisioning extensions that are not part of the core OIDC client registration model.",
-            "required": [
-                "enabled"
-            ],
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "description": "Whether the client is enabled in the target authorization server.",
                     "default": true
                 },
                 "pkce_required": {
@@ -247,6 +149,10 @@
                     "minimum": 0,
                     "description": "Access token lifetime in seconds."
                 },
+                "rotate_refresh_tokens": {
+                    "type": "boolean",
+                    "description": "Whether refresh token rotation is enabled."
+                },
                 "offline_session_max_lifetime_seconds": {
                     "type": "integer",
                     "minimum": 0,
@@ -260,25 +166,109 @@
                 "session_max_lifetime_seconds": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Maximum lifetime, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent — PingFederate refresh tokens are always persistent grants, not session-bound."
+                    "description": "Maximum lifetime, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent \u2014 PingFederate refresh tokens are always persistent grants, not session-bound."
                 },
                 "session_idle_timeout_seconds": {
                     "type": "integer",
                     "minimum": 0,
                     "description": "Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent."
                 },
-                "rotate_refresh_tokens": {
+                "introspection_enabled": {
                     "type": "boolean",
-                    "description": "Whether refresh token rotation is enabled."
+                    "description": "Whether the client is authorized to call the authorization server's token introspection endpoint (RFC 7662) to validate tokens.",
+                    "default": true
                 },
                 "minimum_acr_value": {
                     "type": "string",
                     "description": "Minimum ACR values enforced by the authorization server."
                 },
-                "introspection_enabled": {
-                    "type": "boolean",
-                    "description": "Whether the client is authorized to call the authorization server's token introspection endpoint (RFC 7662) to validate tokens.",
-                    "default": true
+                "default_acr_values": {
+                    "type": "array",
+                    "description": "Default ACR values to apply when none are requested.",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject_type": {
+                    "type": "string",
+                    "enum": [
+                        "public",
+                        "pairwise"
+                    ],
+                    "description": "Subject identifier type."
+                },
+                "sector_identifier_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Sector identifier URI used with pairwise subject identifiers."
+                },
+                "id_token_signed_response_alg": {
+                    "type": "string",
+                    "description": "Signing algorithm used for ID tokens."
+                },
+                "token_endpoint_auth_signing_alg": {
+                    "type": "string",
+                    "description": "Signing algorithm for client assertion based token endpoint authentication."
+                },
+                "request_object_signing_alg": {
+                    "type": "string",
+                    "description": "Signing algorithm used for JWT authorization request objects."
+                },
+                "jwks_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URI of the client's JSON Web Key Set."
+                },
+                "contacts": {
+                    "type": "array",
+                    "description": "Registration contacts as email addresses.",
+                    "items": {
+                        "type": "string",
+                        "format": "email"
+                    }
+                },
+                "client_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Client home page or information URI."
+                },
+                "logo_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URI of a logo representing the client."
+                },
+                "tos_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Terms-of-service URI."
+                },
+                "policy_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Privacy policy or security policy URI."
+                },
+                "backchannel_logout_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Back-channel logout URI."
+                },
+                "frontchannel_logout_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Front-channel logout URI."
+                },
+                "initiate_login_uri": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Third-party initiated login URI."
+                },
+                "request_uris": {
+                    "type": "array",
+                    "description": "Allowed request object URIs.",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    }
                 }
             }
         },

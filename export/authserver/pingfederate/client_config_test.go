@@ -43,7 +43,7 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		t.Errorf("GrantTypes = %v, want %v", canonical.Client.GrantTypes, wantGrantTypes)
 	}
 
-	if !canonical.Extensions.IntrospectionEnabled {
+	if !canonical.Client.IntrospectionEnabled {
 		t.Error("expected IntrospectionEnabled to be true when ACCESS_TOKEN_VALIDATION is present")
 	}
 
@@ -51,16 +51,16 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		t.Errorf("TokenEndpointAuthMethod = %q, want %q", canonical.Client.TokenEndpointAuthMethod, authserver.AuthMethodClientSecretBasic)
 	}
 
-	if canonical.Extensions.AccessTokenFormat != authserver.AccessTokenFormatJwt {
-		t.Errorf("AccessTokenFormat = %q, want %q", canonical.Extensions.AccessTokenFormat, authserver.AccessTokenFormatJwt)
+	if canonical.Client.AccessTokenFormat != authserver.AccessTokenFormatJwt {
+		t.Errorf("AccessTokenFormat = %q, want %q", canonical.Client.AccessTokenFormat, authserver.AccessTokenFormatJwt)
 	}
 
-	if !canonical.Extensions.PKCERequired {
+	if !canonical.Client.PKCERequired {
 		t.Error("expected PKCERequired to be true")
 	}
 
-	if canonical.Extensions.OfflineSessionMaxLifetimeSeconds != 7200 {
-		t.Errorf("OfflineSessionMaxLifetimeSeconds = %d, want 7200 (2 hours)", canonical.Extensions.OfflineSessionMaxLifetimeSeconds)
+	if canonical.Client.OfflineSessionMaxLifetimeSeconds != 7200 {
+		t.Errorf("OfflineSessionMaxLifetimeSeconds = %d, want 7200 (2 hours)", canonical.Client.OfflineSessionMaxLifetimeSeconds)
 	}
 
 	if canonical.Secrets.EncryptedSecret != "enc-s3cr3t" {

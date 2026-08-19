@@ -1,6 +1,7 @@
 # Traditional server-rendered confidential web application. The secret is held server-side,
 # so client_secret_basic is an acceptable authentication method. Demonstrates most of the
 # standard OIDC registration metadata for a "full featured" web app.
+
 annotations:
   owner_email: portal-team@example.com
   owner_channel: "#customer-portal"
@@ -10,44 +11,41 @@ client:
   client_id: customer-portal-web
   client_name: Example Customer Portal
   description: Server-side rendered customer portal web application.
+  enabled: true
+  application_type: web
+  token_endpoint_auth_method: client_secret_basic
+  grant_types:
+  - authorization_code
+  - refresh_token
+  response_types:
+  - code
+  redirect_uris:
+  - https://portal.example.com/auth/callback
+  post_logout_redirect_uris:
+  - https://portal.example.com/
+  scopes:
+  - openid
+  - profile
+  - email
+  - address
+  - phone
+  - offline_access
+  consent_required: true
+  pkce_required: true
+  access_token_format: jwt
+  access_token_lifetime_seconds: 600
+  rotate_refresh_tokens: true
+  offline_session_max_lifetime_seconds: 1209600
+  offline_session_idle_timeout_seconds: 604800
+  subject_type: public
+  id_token_signed_response_alg: RS256
   contacts:
-    - portal-team@example.com
+  - portal-team@example.com
   client_uri: https://portal.example.com
   logo_uri: https://portal.example.com/assets/logo.png
   tos_uri: https://www.example.com/terms
   policy_uri: https://www.example.com/privacy
-  redirect_uris:
-    - https://portal.example.com/auth/callback
-  post_logout_redirect_uris:
-    - https://portal.example.com/
   frontchannel_logout_uri: https://portal.example.com/auth/logout
-  response_types:
-    - code
-  grant_types:
-    - authorization_code
-    - refresh_token
-  token_endpoint_auth_method: client_secret_basic
-  id_token_signed_response_alg: RS256
-  scopes:
-    - openid
-    - profile
-    - email
-    - address
-    - phone
-    - offline_access
-  consent_required: true
-  application_type: web
-  subject_type: public
-
-extensions:
-  enabled: true
-  pkce_required: true
-  access_token_format: jwt
-  access_token_lifetime_seconds: 600
-  offline_session_max_lifetime_seconds: 1209600
-  offline_session_idle_timeout_seconds: 604800
-  rotate_refresh_tokens: true
-  terms_and_conditions_required: true
 
 secrets:
   encrypted_secret: "enc:v1:REPLACE_WITH_VAULT_REFERENCE"

@@ -10,9 +10,9 @@
 # - client.initiate_login_uri --> Unsupported
 # - client.sector_identifier_uri --> Unsupported
 # - client.subject_type --> Unsupported
-# - extensions.rotate_refresh_tokens --> Unsupported
-# - extensions.access_token_format --> Support for lightweight access tokens intended for later
-# - extensions.introspection_enabled --> Unsupported; no per-client toggle in Keycloak
+# - client.rotate_refresh_tokens --> Unsupported
+# - client.access_token_format --> Support for lightweight access tokens intended for later
+# - client.introspection_enabled --> Unsupported; no per-client toggle in Keycloak
 
 locals {
   # Define which scopes should be available to all clients by default;
@@ -22,9 +22,8 @@ locals {
   # Define the login theme to use for all clients
   login_theme = "keycloak"
 
-  client     = var.config.client
-  extensions = try(var.config.extensions, {})
-  secrets    = try(var.config.secrets, {})
+  client  = var.config.client
+  secrets = try(var.config.secrets, {})
 
   # Normalize nullable list fields so downstream functions like join() never receive null.
   post_logout_redirect_uris = try(local.client.post_logout_redirect_uris, null) == null ? [] : local.client.post_logout_redirect_uris
@@ -35,11 +34,11 @@ locals {
   optional_scopes           = try(local.client.scopes, null) == null ? [] : local.client.scopes
 
   # Normalize nullable booleans for use in conditions/provider boolean fields.
-  enabled          = try(local.extensions.enabled, null) != false
+  enabled          = try(local.client.enabled, null) != false
   consent_required = try(local.client.consent_required, null) != false
-  par_required     = try(local.extensions.par_required, null) == true
-  dpop_required    = try(local.extensions.dpop_required, null) == true
-  pkce_required    = try(local.extensions.pkce_required, null) != false
+  par_required     = try(local.client.par_required, null) == true
+  dpop_required    = try(local.client.dpop_required, null) == true
+  pkce_required    = try(local.client.pkce_required, null) != false
 
   # Normalize nullable strings used in extra_config and URL toggles.
   frontchannel_logout_uri = try(local.client.frontchannel_logout_uri, null) == null ? "" : local.client.frontchannel_logout_uri
@@ -49,16 +48,16 @@ locals {
   # Offline session lifetime/idle timeout: the persistent-refresh-token attributes, only
   # honored by Keycloak for clients that request the offline_access scope, so we add that
   # scope below whenever either of these is configured.
-  offline_session_max_lifetime_seconds = try(local.extensions.offline_session_max_lifetime_seconds, null)
-  offline_session_idle_timeout_seconds = try(local.extensions.offline_session_idle_timeout_seconds, null)
+  offline_session_max_lifetime_seconds = try(local.client.offline_session_max_lifetime_seconds, null)
+  offline_session_idle_timeout_seconds = try(local.client.offline_session_idle_timeout_seconds, null)
   # Purely an internal computed flag (not a Keycloak provider setting) used below to decide
   # whether offline_access needs to be added to the client's optional scopes.
   needs_offline_access_scope = local.offline_session_max_lifetime_seconds != null || local.offline_session_idle_timeout_seconds != null
 
   # Session lifetime/idle timeout: governs refresh tokens tied to the browser SSO session
   # (i.e. clients not using offline_access).
-  session_max_lifetime_seconds = try(local.extensions.session_max_lifetime_seconds, null)
-  session_idle_timeout_seconds = try(local.extensions.session_idle_timeout_seconds, null)
+  session_max_lifetime_seconds = try(local.client.session_max_lifetime_seconds, null)
+  session_idle_timeout_seconds = try(local.client.session_idle_timeout_seconds, null)
 
   # Canonical application_type convention: native -> public, anything else (including unset,
   # which defaults to web) -> confidential. Defaulting to confidential is the safer choice,
@@ -80,7 +79,7 @@ locals {
       "id.token.signed.response.alg"    = try(local.client.id_token_signed_response_alg, "")
       "token.endpoint.auth.signing.alg" = try(local.client.token_endpoint_auth_signing_alg, "")
       "request.object.signature.alg"    = try(local.client.request_object_signing_alg, "")
-      "minimum.acr.value"               = try(local.extensions.minimum_acr_value, "")
+      "minimum.acr.value"               = try(local.client.minimum_acr_value, "")
       "default.acr.values"              = join(",", local.default_acr_values)
       "logoUri"                         = try(local.client.logo_uri, "")
       "tosUri"                          = try(local.client.tos_uri, "")
@@ -118,7 +117,7 @@ resource "keycloak_openid_client" "this" {
 
   extra_config = local.extra_config
 
-  access_token_lifespan = try(local.extensions.access_token_lifetime_seconds, null)
+  access_token_lifespan = try(local.client.access_token_lifetime_seconds, null)
 
   client_session_max_lifespan         = local.session_max_lifetime_seconds != null ? tostring(local.session_max_lifetime_seconds) : null
   client_session_idle_timeout         = local.session_idle_timeout_seconds != null ? tostring(local.session_idle_timeout_seconds) : null

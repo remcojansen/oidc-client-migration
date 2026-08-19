@@ -77,13 +77,13 @@ variable "keycloak_enabled" {
 }
 
 variable "pingfederate_access_token_manager_mapping" {
-  description = "Maps extensions.access_token_format (\"jwt\" or \"opaque\") and extensions.access_token_lifetime_seconds to this PingFederate deployment's access token manager IDs. Required when pingfederate_enabled = true. PingFederate access token managers are user-created resources with no universal naming convention, so this must be supplied per-deployment. Example: { jwt = { 300 = \"my-jwt-manager-short\", 1800 = \"my-jwt-manager-long\" }, opaque = { 300 = \"my-opaque-manager-short\" } }."
+  description = "Maps client.access_token_format (\"jwt\" or \"opaque\") and client.access_token_lifetime_seconds to this PingFederate deployment's access token manager IDs. Required when pingfederate_enabled = true. PingFederate access token managers are user-created resources with no universal naming convention, so this must be supplied per-deployment. Example: { jwt = { 300 = \"my-jwt-manager-short\", 1800 = \"my-jwt-manager-long\" }, opaque = { 300 = \"my-opaque-manager-short\" } }."
   type        = map(map(string))
   default     = {}
 }
 
 variable "pingfederate_minimum_acr_value_param_name" {
-  description = "PingFederate Extended Parameter name storing extensions.minimum_acr_value. PingFederate has no native concept for this; it is an arbitrary, deployment-chosen Extended Parameter."
+  description = "PingFederate Extended Parameter name storing client.minimum_acr_value. PingFederate has no native concept for this; it is an arbitrary, deployment-chosen Extended Parameter."
   type        = string
   default     = "minimum_acr_value"
 }
