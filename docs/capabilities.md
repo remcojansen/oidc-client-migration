@@ -27,47 +27,43 @@ provisioned to a target system. They only round-trip through canonical files if 
 | `client_id` | ✅ | ✅ | ✅ | ✅ |
 | `client_name` | ✅ | ✅ | ✅ | ✅ |
 | `description` | ✅ | ✅ | ✅ | ✅ |
-| `contacts` | ❌ | ❌ | ❌ | ❌ |
-| `client_uri` | ✅ | ✅ | ❌ | ❌ |
-| `logo_uri` | ✅ | ✅ | ✅ | ✅ |
-| `tos_uri` | ✅ | ✅ | ❌ | ❌ |
-| `policy_uri` | ✅ | ✅ | ❌ | ❌ |
-| `jwks_uri` | ✅ | ✅ | ✅ | ✅ |
-| `redirect_uris` | ✅ | ✅ | ✅ | ✅ |
-| `response_types` | ~ [1] | ❌ [2] | ~ [1] | ❌ [2] |
-| `grant_types` | ✅ | ✅ | ✅ | ✅ |
+| `enabled` | ✅ | ✅ | ✅ | ✅ |
+| `application_type` | ~ [4] | ✅ [12] | ~ [4] | ❌ [2] |
 | `token_endpoint_auth_method` | ✅ | ✅ | ✅ | ✅ |
-| `token_endpoint_auth_signing_alg` | ✅ | ✅ | ❌ | ❌ |
-| `id_token_signed_response_alg` | ✅ | ✅ | ✅ | ✅ |
-| `request_object_signing_alg` | ✅ | ✅ | ❌ | ❌ |
+| `grant_types` | ✅ | ✅ | ✅ | ✅ |
+| `response_types` | ~ [1] | ❌ [2] | ~ [1] | ❌ [2] |
+| `redirect_uris` | ✅ | ✅ | ✅ | ✅ |
+| `post_logout_redirect_uris` | ✅ | ✅ | ✅ | ✅ |
 | `scopes` | ✅ | ✅ | ✅ | ✅ |
 | `consent_required` | ✅ | ✅ | ✅ [3] | ✅ [3] |
-| `application_type` | ~ [4] | ✅ [12] | ~ [4] | ❌ [2] |
-| `subject_type` | ❌ [5] | ❌ | ✅ | ✅ |
-| `sector_identifier_uri` | ❌ | ❌ | ❌ | ❌ |
-| `backchannel_logout_uri` | ✅ | ✅ | ✅ | ✅ |
-| `frontchannel_logout_uri` | ✅ | ✅ | ✅ | ✅ |
-| `post_logout_redirect_uris` | ✅ | ✅ | ✅ | ✅ |
-| `default_acr_values` | ✅ | ✅ | ❌ | ❌ |
-| `initiate_login_uri` | ❌ | ❌ | ❌ | ❌ |
-| `request_uris` | ✅ | ✅ | ❌ | ❌ |
-
-## `extensions`
-
-| Field | Keycloak export | Keycloak import | PingFederate export | PingFederate import |
-| --- | --- | --- | --- | --- |
-| `enabled` | ✅ | ✅ | ✅ | ✅ |
 | `pkce_required` | ✅ | ✅ | ✅ | ✅ |
 | `dpop_required` | ✅ | ✅ | ✅ | ✅ |
 | `par_required` | ✅ | ✅ | ✅ | ✅ |
 | `access_token_format` | ~ [6] | ❌ [7] | ~ [8] | ~ [8] |
 | `access_token_lifetime_seconds` | ✅ | ✅ | ~ [8] | ~ [8] |
+| `rotate_refresh_tokens` | ~ [9] | ❌ | ✅ | ✅ |
 | `offline_session_max_lifetime_seconds` | ✅ | ✅ [10] | ✅ | ✅ |
 | `offline_session_idle_timeout_seconds` | ✅ | ✅ [10] | ✅ | ✅ |
 | `session_max_lifetime_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
 | `session_idle_timeout_seconds` | ✅ | ✅ | ❌ [11] | ❌ [11] |
-| `rotate_refresh_tokens` | ~ [9] | ❌ | ✅ | ✅ |
-| `minimum_acr_value` | ✅ | ✅ | ✅ | ✅ |
+| `introspection_enabled` | ✅ | ❌ [13] | ✅ | ✅ |
+| `minimum_acr_value` | ✅ | ✅ | ~ [14] | ~ [14] |
+| `default_acr_values` | ✅ | ✅ | ❌ | ❌ |
+| `subject_type` | ❌ [5] | ❌ | ✅ | ✅ |
+| `sector_identifier_uri` | ❌ | ❌ | ❌ | ❌ |
+| `id_token_signed_response_alg` | ✅ | ✅ | ✅ | ✅ |
+| `token_endpoint_auth_signing_alg` | ✅ | ✅ | ❌ | ❌ |
+| `request_object_signing_alg` | ✅ | ✅ | ❌ | ❌ |
+| `jwks_uri` | ✅ | ✅ | ✅ | ✅ |
+| `contacts` | ❌ | ❌ | ❌ | ❌ |
+| `client_uri` | ✅ | ✅ | ❌ | ❌ |
+| `logo_uri` | ✅ | ✅ | ✅ | ✅ |
+| `tos_uri` | ✅ | ✅ | ❌ | ❌ |
+| `policy_uri` | ✅ | ✅ | ❌ | ❌ |
+| `backchannel_logout_uri` | ✅ | ✅ | ✅ | ✅ |
+| `frontchannel_logout_uri` | ✅ | ✅ | ✅ | ✅ |
+| `initiate_login_uri` | ❌ | ❌ | ❌ | ❌ |
+| `request_uris` | ✅ | ✅ | ❌ | ❌ |
 
 ## `secrets`
 
@@ -113,3 +109,12 @@ provisioned to a target system. They only round-trip through canonical files if 
     `access_type` defaults to `CONFIDENTIAL` unless `application_type` is explicitly `native`, to
     avoid accidentally provisioning an intended confidential client as public when the field is
     left unset.
+13. **`introspection_enabled` (Keycloak import)**: not consumed by the Keycloak module — Keycloak
+    has no per-client toggle (any authenticating client may call introspection). PingFederate
+    import does consume it: it's converted to the `ACCESS_TOKEN_VALIDATION` grant type.
+14. **`minimum_acr_value` (PingFederate export/import)**: PingFederate has no native concept for
+    this; both directions depend on a deployment-chosen Extended Parameter (name configurable via
+    `AUTH_SERVER_MINIMUM_ACR_VALUE_PARAM_NAME` on export and
+    `pingfederate_minimum_acr_value_param_name` on import). If that Extended Parameter is not
+    configured on the deployment, the field is silently unsupported (export reads nothing,
+    import has nothing to write to) — see [configuration.md](configuration.md).

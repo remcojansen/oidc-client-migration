@@ -65,7 +65,7 @@ PingFederate has no per-client access token format/lifetime fields — these are
 selecting one of the deployment's preconfigured access token managers. Set
 `AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP` to a JSON object mapping your PingFederate access token
 manager IDs to their format/lifetime, so the exporter can resolve
-`extensions.access_token_format`/`extensions.access_token_lifetime_seconds`, e.g.:
+`client.access_token_format`/`client.access_token_lifetime_seconds`, e.g.:
 
 ```bash
 export AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP='{
@@ -74,7 +74,7 @@ export AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP='{
 }'
 ```
 
-`extensions.minimum_acr_value` also has no native PingFederate equivalent — it's read from a
+`client.minimum_acr_value` also has no native PingFederate equivalent — it's read from a
 deployment-chosen Extended Parameter. If your deployment uses a name other than the default
 (`minimum_acr_value`), set `AUTH_SERVER_MINIMUM_ACR_VALUE_PARAM_NAME` accordingly.
 

@@ -11,7 +11,6 @@ import (
 type CanonicalClientConfig struct {
 	Annotations CanonicalClientConfigAnnotations `json:"annotations,omitempty" yaml:"annotations,omitempty"`
 	Client      CanonicalClientConfigClient      `json:"client" yaml:"client"`
-	Extensions  CanonicalClientConfigExtensions  `json:"extensions,omitempty" yaml:"extensions,omitempty"`
 	Secrets     CanonicalClientConfigSecrets     `json:"secrets,omitempty" yaml:"secrets,omitempty"`
 }
 
@@ -23,52 +22,58 @@ type CanonicalClientConfigAnnotations struct {
 	OwnerSecurityGroup string `json:"owner_security_group,omitempty" yaml:"owner_security_group,omitempty"`
 }
 
+// CanonicalClientConfigClient combines standard OAuth 2.0 / OIDC client registration fields with
+// project-specific authorization-server policy and provisioning fields that have no RFC
+// definition. Field order is grouped by purpose (identity, auth flow, session/token policy,
+// advanced OIDC, registration metadata) rather than by standards-origin; see
+// docs/canonical-client-config-v0.1.md for which fields are RFC-defined.
 type CanonicalClientConfigClient struct {
-	// OAuth 2.0 and OIDC client metadata fields
-	ClientID                    string   `json:"client_id" yaml:"client_id"`
-	Name                        string   `json:"client_name" yaml:"client_name"`
-	Description                 string   `json:"description,omitempty" yaml:"description,omitempty"`
-	Contacts                    []string `json:"contacts,omitempty" yaml:"contacts,omitempty"`
-	ClientURI                   string   `json:"client_uri,omitempty" yaml:"client_uri,omitempty"`
-	LogoURI                     string   `json:"logo_uri,omitempty" yaml:"logo_uri,omitempty"`
-	TosURI                      string   `json:"tos_uri,omitempty" yaml:"tos_uri,omitempty"`
-	PolicyURI                   string   `json:"policy_uri,omitempty" yaml:"policy_uri,omitempty"`
-	JWKSURI                     string   `json:"jwks_uri,omitempty" yaml:"jwks_uri,omitempty"`
-	RedirectURIs                []string `json:"redirect_uris,omitempty" yaml:"redirect_uris,omitempty"`
-	ResponseTypes               []string `json:"response_types,omitempty" yaml:"response_types,omitempty"`
-	GrantTypes                  []string `json:"grant_types,omitempty" yaml:"grant_types,omitempty"`
-	TokenEndpointAuthMethod     string   `json:"token_endpoint_auth_method,omitempty" yaml:"token_endpoint_auth_method,omitempty"`
-	TokenEndpointAuthSigningAlg string   `json:"token_endpoint_auth_signing_alg,omitempty" yaml:"token_endpoint_auth_signing_alg,omitempty"`
-	IdTokenSignedResponseAlg    string   `json:"id_token_signed_response_alg,omitempty" yaml:"id_token_signed_response_alg,omitempty"`
-	RequestObjectSigningAlg     string   `json:"request_object_signing_alg,omitempty" yaml:"request_object_signing_alg,omitempty"`
-	Scopes                      []string `json:"scopes,omitempty" yaml:"scopes,omitempty"`
-	ConsentRequired             bool     `json:"consent_required" yaml:"consent_required"`
-	ApplicationType             string   `json:"application_type,omitempty" yaml:"application_type,omitempty"` // "web" (confidential client) or "native" (public client)
-	SubjectType                 string   `json:"subject_type,omitempty" yaml:"subject_type,omitempty"`
-	SectorIdentifierURI         string   `json:"sector_identifier_uri,omitempty" yaml:"sector_identifier_uri,omitempty"`
-	BackchannelLogoutURI        string   `json:"backchannel_logout_uri,omitempty" yaml:"backchannel_logout_uri,omitempty"`
-	FrontchannelLogoutURI       string   `json:"frontchannel_logout_uri,omitempty" yaml:"frontchannel_logout_uri,omitempty"`
-	PostLogoutRedirectURIs      []string `json:"post_logout_redirect_uris,omitempty" yaml:"post_logout_redirect_uris,omitempty"`
-	DefaultACRValues            []string `json:"default_acr_values,omitempty" yaml:"default_acr_values,omitempty"` // default ACR values to be used if the authorization request does not specify any ACR values
-	InitiateLoginURI            string   `json:"initiate_login_uri,omitempty" yaml:"initiate_login_uri,omitempty"`
-	RequestURIs                 []string `json:"request_uris,omitempty" yaml:"request_uris,omitempty"`
-}
+	ClientID        string `json:"client_id" yaml:"client_id"`
+	Name            string `json:"client_name" yaml:"client_name"`
+	Description     string `json:"description,omitempty" yaml:"description,omitempty"`
+	Enabled         bool   `json:"enabled" yaml:"enabled"`                                       // default: true
+	ApplicationType string `json:"application_type,omitempty" yaml:"application_type,omitempty"` // "web" (confidential client) or "native" (public client)
 
-type CanonicalClientConfigExtensions struct {
-	// Non-standard extensions for additional client configuration options
-	Enabled                          bool   `json:"enabled" yaml:"enabled"` // default: true
-	PKCERequired                     bool   `json:"pkce_required" yaml:"pkce_required"`
-	DPoPRequired                     bool   `json:"dpop_required" yaml:"dpop_required"`
-	PARRequired                      bool   `json:"par_required" yaml:"par_required"`
-	AccessTokenFormat                string `json:"access_token_format,omitempty" yaml:"access_token_format,omitempty"` // "jwt" or "opaque"
-	AccessTokenLifetimeSeconds       int    `json:"access_token_lifetime_seconds,omitempty" yaml:"access_token_lifetime_seconds,omitempty"`
-	OfflineSessionMaxLifetimeSeconds int    `json:"offline_session_max_lifetime_seconds,omitempty" yaml:"offline_session_max_lifetime_seconds,omitempty"` // persistent/offline refresh token lifetime, independent of any browser SSO session
-	OfflineSessionIdleTimeoutSeconds int    `json:"offline_session_idle_timeout_seconds,omitempty" yaml:"offline_session_idle_timeout_seconds,omitempty"`
-	SessionMaxLifetimeSeconds        int    `json:"session_max_lifetime_seconds,omitempty" yaml:"session_max_lifetime_seconds,omitempty"` // refresh token lifetime tied to the browser SSO session; no PingFederate equivalent
-	SessionIdleTimeoutSeconds        int    `json:"session_idle_timeout_seconds,omitempty" yaml:"session_idle_timeout_seconds,omitempty"`
-	RotateRefreshTokens              bool   `json:"rotate_refresh_tokens" yaml:"rotate_refresh_tokens"`
-	MinimumACRValue                  string `json:"minimum_acr_value,omitempty" yaml:"minimum_acr_value,omitempty"` // minimum ACR values to be used regardless of the requested ACR values in the authorization request
-	IntrospectionEnabled             bool   `json:"introspection_enabled" yaml:"introspection_enabled"`             // whether the client may call the token introspection endpoint (RFC 7662); default: true
+	TokenEndpointAuthMethod string   `json:"token_endpoint_auth_method,omitempty" yaml:"token_endpoint_auth_method,omitempty"`
+	GrantTypes              []string `json:"grant_types,omitempty" yaml:"grant_types,omitempty"`
+	ResponseTypes           []string `json:"response_types,omitempty" yaml:"response_types,omitempty"`
+	RedirectURIs            []string `json:"redirect_uris,omitempty" yaml:"redirect_uris,omitempty"`
+	PostLogoutRedirectURIs  []string `json:"post_logout_redirect_uris,omitempty" yaml:"post_logout_redirect_uris,omitempty"`
+	Scopes                  []string `json:"scopes,omitempty" yaml:"scopes,omitempty"`
+	ConsentRequired         bool     `json:"consent_required" yaml:"consent_required"`
+
+	PKCERequired      bool   `json:"pkce_required" yaml:"pkce_required"`
+	DPoPRequired      bool   `json:"dpop_required" yaml:"dpop_required"`
+	PARRequired       bool   `json:"par_required" yaml:"par_required"`
+	AccessTokenFormat string `json:"access_token_format,omitempty" yaml:"access_token_format,omitempty"` // "jwt" or "opaque"
+
+	AccessTokenLifetimeSeconds       int  `json:"access_token_lifetime_seconds,omitempty" yaml:"access_token_lifetime_seconds,omitempty"`
+	RotateRefreshTokens              bool `json:"rotate_refresh_tokens" yaml:"rotate_refresh_tokens"`
+	OfflineSessionMaxLifetimeSeconds int  `json:"offline_session_max_lifetime_seconds,omitempty" yaml:"offline_session_max_lifetime_seconds,omitempty"` // persistent/offline refresh token lifetime, independent of any browser SSO session
+	OfflineSessionIdleTimeoutSeconds int  `json:"offline_session_idle_timeout_seconds,omitempty" yaml:"offline_session_idle_timeout_seconds,omitempty"`
+	SessionMaxLifetimeSeconds        int  `json:"session_max_lifetime_seconds,omitempty" yaml:"session_max_lifetime_seconds,omitempty"` // refresh token lifetime tied to the browser SSO session; no PingFederate equivalent
+	SessionIdleTimeoutSeconds        int  `json:"session_idle_timeout_seconds,omitempty" yaml:"session_idle_timeout_seconds,omitempty"`
+	IntrospectionEnabled             bool `json:"introspection_enabled" yaml:"introspection_enabled"` // whether the client may call the token introspection endpoint (RFC 7662); default: true
+
+	MinimumACRValue     string   `json:"minimum_acr_value,omitempty" yaml:"minimum_acr_value,omitempty"`   // minimum ACR values to be used regardless of the requested ACR values in the authorization request
+	DefaultACRValues    []string `json:"default_acr_values,omitempty" yaml:"default_acr_values,omitempty"` // default ACR values to be used if the authorization request does not specify any ACR values
+	SubjectType         string   `json:"subject_type,omitempty" yaml:"subject_type,omitempty"`
+	SectorIdentifierURI string   `json:"sector_identifier_uri,omitempty" yaml:"sector_identifier_uri,omitempty"`
+
+	IdTokenSignedResponseAlg    string `json:"id_token_signed_response_alg,omitempty" yaml:"id_token_signed_response_alg,omitempty"`
+	TokenEndpointAuthSigningAlg string `json:"token_endpoint_auth_signing_alg,omitempty" yaml:"token_endpoint_auth_signing_alg,omitempty"`
+	RequestObjectSigningAlg     string `json:"request_object_signing_alg,omitempty" yaml:"request_object_signing_alg,omitempty"`
+	JWKSURI                     string `json:"jwks_uri,omitempty" yaml:"jwks_uri,omitempty"`
+
+	Contacts              []string `json:"contacts,omitempty" yaml:"contacts,omitempty"`
+	ClientURI             string   `json:"client_uri,omitempty" yaml:"client_uri,omitempty"`
+	LogoURI               string   `json:"logo_uri,omitempty" yaml:"logo_uri,omitempty"`
+	TosURI                string   `json:"tos_uri,omitempty" yaml:"tos_uri,omitempty"`
+	PolicyURI             string   `json:"policy_uri,omitempty" yaml:"policy_uri,omitempty"`
+	BackchannelLogoutURI  string   `json:"backchannel_logout_uri,omitempty" yaml:"backchannel_logout_uri,omitempty"`
+	FrontchannelLogoutURI string   `json:"frontchannel_logout_uri,omitempty" yaml:"frontchannel_logout_uri,omitempty"`
+	InitiateLoginURI      string   `json:"initiate_login_uri,omitempty" yaml:"initiate_login_uri,omitempty"`
+	RequestURIs           []string `json:"request_uris,omitempty" yaml:"request_uris,omitempty"`
 }
 
 type CanonicalClientConfigSecrets struct {

@@ -27,7 +27,7 @@ Client configurations are loaded from YAML files in the path configured by `conf
 directory at the repository root — the same directory the export tool writes to).
 
 Each YAML file is decoded and passed to both modules, which consume the canonical model (`client`,
-`extensions`, `secrets`).
+`secrets`).
 
 ## Module toggles
 

@@ -47,12 +47,12 @@ func TestGetCanonicalClientConfig(t *testing.T) {
 		t.Errorf("TokenEndpointAuthMethod = %q, want client_secret_basic", canonical.Client.TokenEndpointAuthMethod)
 	}
 
-	if !canonical.Extensions.PKCERequired {
+	if !canonical.Client.PKCERequired {
 		t.Error("expected PKCERequired to be true when pkce.code.challenge.method is set to S256")
 	}
 
-	if canonical.Extensions.AccessTokenLifetimeSeconds != 600 {
-		t.Errorf("AccessTokenLifetimeSeconds = %d, want 600", canonical.Extensions.AccessTokenLifetimeSeconds)
+	if canonical.Client.AccessTokenLifetimeSeconds != 600 {
+		t.Errorf("AccessTokenLifetimeSeconds = %d, want 600", canonical.Client.AccessTokenLifetimeSeconds)
 	}
 
 	if canonical.Secrets.PlainSecret != "s3cr3t" {

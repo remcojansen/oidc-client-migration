@@ -17,12 +17,12 @@
 # - client.policy_uri --> Unsupported
 # - client.response_types --> Unsupported (client type is derived from grant_types instead)
 # - client.application_type --> Unsupported (client type is derived from token_endpoint_auth_method instead)
-# - extensions.session_max_lifetime_seconds --> Unsupported (no PingFederate equivalent; PingFederate's
+# - client.session_max_lifetime_seconds --> Unsupported (no PingFederate equivalent; PingFederate's
 #   persistent grant lifetime applies unconditionally, so it is only represented by
-#   extensions.offline_session_max_lifetime_seconds)
-# - extensions.session_idle_timeout_seconds --> Unsupported (see above)
+#   client.offline_session_max_lifetime_seconds)
+# - client.session_idle_timeout_seconds --> Unsupported (see above)
 #
-# extensions.access_token_format / extensions.access_token_lifetime_seconds are resolved to a
+# client.access_token_format / client.access_token_lifetime_seconds are resolved to a
 # PingFederate access token manager ID via var.access_token_manager_mapping, since access token
 # managers are user-created, deployment-specific resources with no universal naming convention.
 
@@ -31,9 +31,8 @@ locals {
   # these scopes will be excluded from the scopes that are assigned to the client
   common_scopes = ["acr", "basic", "profile", "openid", "email", "address", "phone"]
 
-  client     = var.config.client
-  extensions = try(var.config.extensions, {})
-  secrets    = try(var.config.secrets, {})
+  client  = var.config.client
+  secrets = try(var.config.secrets, {})
 
   grant_type_mapping = {
     "authorization_code"                              = "AUTHORIZATION_CODE"
@@ -49,7 +48,7 @@ locals {
     [
       for gt in try(local.client.grant_types, []) : lookup(local.grant_type_mapping, gt, local.grant_type_invalid_sentinel)
     ],
-    try(local.extensions.introspection_enabled, true) ? ["ACCESS_TOKEN_VALIDATION"] : []
+    try(local.client.introspection_enabled, true) ? ["ACCESS_TOKEN_VALIDATION"] : []
   )
 
   # Sentinel value used to detect a grant type with no PingFederate equivalent; checked by the
@@ -61,13 +60,13 @@ locals {
     for gt in try(local.client.grant_types, []) : gt if !contains(keys(local.grant_type_mapping), gt)
   ]
 
-  access_token_lifetime_seconds = try(local.extensions.access_token_lifetime_seconds, 300)
+  access_token_lifetime_seconds = try(local.client.access_token_lifetime_seconds, 300)
 
-  refresh_token_lifetime_minutes     = max(1, ceil(try(local.extensions.offline_session_max_lifetime_seconds, 0) / 60))
-  refresh_token_idle_timeout_minutes = max(1, ceil(try(local.extensions.offline_session_idle_timeout_seconds, 0) / 60))
+  refresh_token_lifetime_minutes     = max(1, ceil(try(local.client.offline_session_max_lifetime_seconds, 0) / 60))
+  refresh_token_idle_timeout_minutes = max(1, ceil(try(local.client.offline_session_idle_timeout_seconds, 0) / 60))
 
   atm_id = lookup(
-    lookup(var.access_token_manager_mapping, try(local.extensions.access_token_format, "jwt"), {}),
+    lookup(var.access_token_manager_mapping, try(local.client.access_token_format, "jwt"), {}),
     local.access_token_lifetime_seconds,
     local.atm_id_invalid_sentinel
   )
@@ -93,11 +92,11 @@ locals {
   scopes = try(local.client.scopes, [])
 
   # Normalize nullable booleans for use in conditions/provider boolean fields.
-  enabled          = try(local.extensions.enabled, null) != false
+  enabled          = try(local.client.enabled, null) != false
   consent_required = try(local.client.consent_required, null) != false
-  pkce_required    = try(local.extensions.pkce_required, null) != false
-  dpop_required    = try(local.extensions.dpop_required, null) == true
-  par_required     = try(local.extensions.par_required, null) == true
+  pkce_required    = try(local.client.pkce_required, null) != false
+  dpop_required    = try(local.client.dpop_required, null) == true
+  par_required     = try(local.client.par_required, null) == true
 }
 
 resource "pingfederate_oauth_client" "this" {
@@ -145,7 +144,7 @@ resource "pingfederate_oauth_client" "this" {
   exclusive_scopes = local.scopes
 
   extended_parameters = {
-    (var.minimum_acr_value_param_name) = { values = [try(local.extensions.minimum_acr_value, "")] }
+    (var.minimum_acr_value_param_name) = { values = [try(local.client.minimum_acr_value, "")] }
   }
 
 
@@ -155,11 +154,11 @@ resource "pingfederate_oauth_client" "this" {
   lockout_max_malicious_actions_type      = "SERVER_DEFAULT"
   persistent_grant_expiration_time        = local.refresh_token_lifetime_minutes
   persistent_grant_expiration_time_unit   = "MINUTES"
-  persistent_grant_expiration_type        = try(local.extensions.offline_session_max_lifetime_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
+  persistent_grant_expiration_type        = try(local.client.offline_session_max_lifetime_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
   persistent_grant_idle_timeout           = local.refresh_token_idle_timeout_minutes
   persistent_grant_idle_timeout_time_unit = "MINUTES"
-  persistent_grant_idle_timeout_type      = try(local.extensions.offline_session_idle_timeout_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
-  refresh_rolling                         = try(local.extensions.rotate_refresh_tokens, true) ? "ROLL" : "DONT_ROLL"
+  persistent_grant_idle_timeout_type      = try(local.client.offline_session_idle_timeout_seconds, 0) > 0 ? "OVERRIDE_SERVER_DEFAULT" : "SERVER_DEFAULT"
+  refresh_rolling                         = try(local.client.rotate_refresh_tokens, true) ? "ROLL" : "DONT_ROLL"
   # refresh_token_rolling_grace_period       = 0
   refresh_token_rolling_grace_period_type = "SERVER_DEFAULT"
   # refresh_token_rolling_interval           = 0
@@ -173,7 +172,7 @@ resource "pingfederate_oauth_client" "this" {
   lifecycle {
     precondition {
       condition     = local.atm_id != local.atm_id_invalid_sentinel
-      error_message = "Unsupported access_token_format/access_token_lifetime_seconds combination: ${try(local.extensions.access_token_format, "jwt")}/${local.access_token_lifetime_seconds}. Supported combinations: ${jsonencode(var.access_token_manager_mapping)}."
+      error_message = "Unsupported access_token_format/access_token_lifetime_seconds combination: ${try(local.client.access_token_format, "jwt")}/${local.access_token_lifetime_seconds}. Supported combinations: ${jsonencode(var.access_token_manager_mapping)}."
     }
     precondition {
       condition     = !contains(local.grant_types, local.grant_type_invalid_sentinel)

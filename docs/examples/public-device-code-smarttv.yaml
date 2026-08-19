@@ -1,6 +1,7 @@
 # Smart-TV / limited-input device using the device authorization grant (device code flow).
 # Public client since the device cannot securely store a secret; PKCE does not apply to
 # this flow, but consent is still required before tokens are issued.
+
 annotations:
   owner_email: living-room-apps@example.com
   owner_channel: "#living-room-apps"
@@ -9,24 +10,22 @@ client:
   client_id: smarttv-streaming-app
   client_name: Example Streaming App (Smart TV)
   description: Living-room streaming device client using the device authorization grant.
-  grant_types:
-    - device_code
-    - refresh_token
-  token_endpoint_auth_method: none
-  id_token_signed_response_alg: RS256
-  scopes:
-    - openid
-    - profile
-    - streaming:playback
-    - offline_access
-  consent_required: true
-  application_type: native
-  subject_type: public
-
-extensions:
   enabled: true
+  application_type: native
+  token_endpoint_auth_method: none
+  grant_types:
+  - urn:ietf:params:oauth:grant-type:device_code
+  - refresh_token
+  scopes:
+  - openid
+  - profile
+  - streaming:playback
+  - offline_access
+  consent_required: true
   access_token_format: jwt
   access_token_lifetime_seconds: 300
+  rotate_refresh_tokens: true
   offline_session_max_lifetime_seconds: 7776000
   offline_session_idle_timeout_seconds: 2592000
-  rotate_refresh_tokens: true
+  subject_type: public
+  id_token_signed_response_alg: RS256

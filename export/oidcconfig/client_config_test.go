@@ -12,9 +12,7 @@ func testConfig() *CanonicalClientConfig {
 		Client: CanonicalClientConfigClient{
 			ClientID: "my-client",
 			Name:     "My Client",
-		},
-		Extensions: CanonicalClientConfigExtensions{
-			Enabled: true,
+			Enabled:  true,
 		},
 		Secrets: CanonicalClientConfigSecrets{
 			PlainSecret: "s3cr3t",
@@ -74,7 +72,7 @@ func TestWriteConfigFile_ExplicitFalseBooleanIsNotOmitted(t *testing.T) {
 	dir := t.TempDir()
 	cfg := testConfig()
 	cfg.Client.ConsentRequired = false
-	cfg.Extensions.PKCERequired = false
+	cfg.Client.PKCERequired = false
 
 	if err := cfg.WriteConfigFile(dir, "yaml"); err != nil {
 		t.Fatalf("WriteConfigFile returned error: %v", err)
