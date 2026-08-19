@@ -29,3 +29,6 @@ keycloak_enabled     = false
 #     300 = "my-opaque-manager-short"
 #   }
 # }
+
+# Name of the PingFederate Extended Parameter storing extensions.minimum_acr_value.
+# pingfederate_minimum_acr_value_param_name = "minimum_acr_value"

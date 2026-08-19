@@ -67,10 +67,10 @@ func TestWriteConfigFile_InvalidOutputDir(t *testing.T) {
 }
 
 func TestWriteConfigFile_ExplicitFalseBooleanIsNotOmitted(t *testing.T) {
-	// Regression test: consent_required, pkce_required, dpop_required, par_required,
-	// rotate_refresh_tokens, and terms_and_conditions_required must always be serialized,
-	// even when false, rather than being dropped by `omitempty` (which previously made it
-	// impossible to tell "explicitly not required" apart from "not captured at all").
+	// Regression test: consent_required, pkce_required, dpop_required, par_required, and
+	// rotate_refresh_tokens must always be serialized, even when false, rather than being
+	// dropped by `omitempty` (which previously made it impossible to tell "explicitly not
+	// required" apart from "not captured at all").
 	dir := t.TempDir()
 	cfg := testConfig()
 	cfg.Client.ConsentRequired = false

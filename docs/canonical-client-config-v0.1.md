@@ -95,11 +95,10 @@ Metadata is out-of-band in v0.1. It is retained in canonical files for ownership
 | `session_idle_timeout_seconds` | integer | Idle timeout, in seconds, of a refresh token tied to the authorization server's browser SSO session. Has no PingFederate equivalent. |
 | `rotate_refresh_tokens` | bool | Whether refresh token rotation is enabled. |
 | `minimum_acr_value` | string | Minimum ACR value required by the authorization server. |
-| `terms_and_conditions_required` | bool | Whether terms-and-conditions approval is required. Defaults to `true` when omitted. |
 | `introspection_enabled` | bool | Whether the client is authorized to call the authorization server's token introspection endpoint ([RFC 7662](https://www.rfc-editor.org/rfc/rfc7662)) to validate tokens. Defaults to `true` when omitted. |
 
-`consent_required`, `pkce_required`, `dpop_required`, `par_required`, `rotate_refresh_tokens`,
-and `terms_and_conditions_required` are always written out explicitly by `export/` (as `true` or
+`consent_required`, `pkce_required`, `dpop_required`, `par_required`, and `rotate_refresh_tokens`
+are always written out explicitly by `export/` (as `true` or
 `false`), even when `false` — the underlying value is always determinable from the source system,
 so it is never simply left out. The defaults noted above apply when these fields are omitted from
 a hand-authored configuration; the `import/` Terraform modules apply them consistently regardless

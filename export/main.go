@@ -66,6 +66,7 @@ func main() {
 		}
 		c = pingfederate.CreatePingFederateClient().
 			WithAccessTokenManagerMapping(atmMapping).
+			WithMinimumAcrValueParamName(os.Getenv("AUTH_SERVER_MINIMUM_ACR_VALUE_PARAM_NAME")).
 			WithBaseURL(os.Getenv("AUTH_SERVER_BASE_URL")).
 			WithUsernamePassword(os.Getenv("AUTH_SERVER_USERNAME"), os.Getenv("AUTH_SERVER_PASSWORD")).
 			WithVerbose(verbose)

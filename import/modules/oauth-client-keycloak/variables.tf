@@ -56,7 +56,6 @@ variable "config" {
       session_idle_timeout_seconds         = optional(number)
       rotate_refresh_tokens                = optional(bool)
       minimum_acr_value                    = optional(string)
-      terms_and_conditions_required        = optional(bool)
     }))
 
     secrets = optional(object({
