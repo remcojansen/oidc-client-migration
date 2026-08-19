@@ -74,6 +74,10 @@ export AUTH_SERVER_ACCESS_TOKEN_MANAGER_MAP='{
 }'
 ```
 
+`extensions.minimum_acr_value` also has no native PingFederate equivalent — it's read from a
+deployment-chosen Extended Parameter. If your deployment uses a name other than the default
+(`minimum_acr_value`), set `AUTH_SERVER_MINIMUM_ACR_VALUE_PARAM_NAME` accordingly.
+
 ## Next step
 
 Once configurations are exported to `client-configurations/`, use the

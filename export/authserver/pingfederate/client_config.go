@@ -42,7 +42,7 @@ type PingFederateClientConfig struct {
 	JWKSSettings                       JWKSSettings       `json:"jwksSettings"`
 	DefaultAccessTokenManagerRef       AccessTokenManager `json:"defaultAccessTokenManagerRef"`
 	OidcPolicy                         OIDCPolicy         `json:"oidcPolicy"`
-	ExtendedParameters                 ExtendedParameters `json:"extendedParameters"`
+	ExtendedParameters                 map[string]ExtendedParameterValue `json:"extendedParameters"`
 	RefreshRolling                     string             `json:"refreshRolling"`
 	PersistentGrantIdleTimeoutType     string             `json:"persistentGrantIdleTimeoutType"`
 	PersistentGrantIdleTimeout         int                `json:"persistentGrantIdleTimeout"`
@@ -56,6 +56,8 @@ type PingFederateClientConfig struct {
 	// injected by the client (see PingFederateClient.WithAccessTokenManagerMapping) rather than
 	// read from the PingFederate API response.
 	accessTokenManagerMapping map[string]AccessTokenManagerInfo
+
+	minimumAcrValueParamName string
 }
 
 // AccessTokenManagerInfo describes the access token format and lifetime produced by a specific
@@ -102,12 +104,6 @@ type PolicyGroup struct {
 	Id string `json:"id"`
 	// Other fields are omitted as they are unused in our mapping
 }
-type ExtendedParameters struct {
-	ExcludeTnC ExtendedParameterValue `json:"exclude_tnc"`
-	Enforce2SV ExtendedParameterValue `json:"enforce_2sv"`
-	// Other fields are omitted as they are unused in our mapping
-}
-
 type ExtendedParameterValue struct {
 	Value []string `json:"values"`
 }
@@ -165,7 +161,6 @@ func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.Canoni
 			OfflineSessionIdleTimeoutSeconds: c.mapOfflineSessionIdleTimeoutSeconds(),
 			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
 			MinimumACRValue:                  c.mapMinimumACRValue(),
-			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
 			IntrospectionEnabled:             c.mapIntrospectionEnabled(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
@@ -419,17 +414,11 @@ func (c *PingFederateClientConfig) mapOfflineSessionIdleTimeoutSeconds() int {
 }
 
 func (c *PingFederateClientConfig) mapMinimumACRValue() string {
-	if len(c.ExtendedParameters.Enforce2SV.Value) == 0 {
+	param, ok := c.ExtendedParameters[c.minimumAcrValueParamName]
+	if !ok || len(param.Value) == 0 {
 		return ""
 	}
-	return c.ExtendedParameters.Enforce2SV.Value[0]
-}
-
-func (c *PingFederateClientConfig) mapTermsAndConditionsRequired() bool {
-	if len(c.ExtendedParameters.ExcludeTnC.Value) == 0 {
-		return true
-	}
-	return !contains(c.ExtendedParameters.ExcludeTnC.Value, "true")
+	return param.Value[0]
 }
 
 func (c *PingFederateClientConfig) mapEncryptedSecret() string {

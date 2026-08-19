@@ -108,7 +108,6 @@ func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalC
 			SessionIdleTimeoutSeconds:        c.mapSessionIdleTimeoutSeconds(),
 			RotateRefreshTokens:              c.mapRotateRefreshTokens(),
 			MinimumACRValue:                  c.mapMinimumACRValue(),
-			TermsAndConditionsRequired:       c.mapTermsAndConditionsRequired(),
 			IntrospectionEnabled:             c.mapIntrospectionEnabled(),
 		},
 		Secrets: oidcconfig.CanonicalClientConfigSecrets{
@@ -410,14 +409,6 @@ func (c *KeycloakClientConfig) mapMinimumACRValue() string {
 		return val
 	}
 	return ""
-}
-
-func (c *KeycloakClientConfig) mapTermsAndConditionsRequired() bool {
-	// Check attributes for terms and conditions requirement.
-	if val, ok := c.Attributes["require-tnc"]; ok {
-		return val == "true"
-	}
-	return false
 }
 
 func (c *KeycloakClientConfig) mapIntrospectionEnabled() bool {

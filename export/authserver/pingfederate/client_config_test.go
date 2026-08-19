@@ -113,3 +113,23 @@ func TestContains(t *testing.T) {
 		t.Error("expected contains to not find \"z\" in the slice")
 	}
 }
+
+func TestMapMinimumACRValue_UsesConfiguredParamName(t *testing.T) {
+	cfg := &PingFederateClientConfig{
+		ExtendedParameters:       map[string]ExtendedParameterValue{"custom_2sv_param": {Value: []string{"urn:mace:incommon:iap:silver"}}},
+		minimumAcrValueParamName: "custom_2sv_param",
+	}
+	if got := cfg.mapMinimumACRValue(); got != "urn:mace:incommon:iap:silver" {
+		t.Errorf("mapMinimumACRValue() = %q, want %q", got, "urn:mace:incommon:iap:silver")
+	}
+}
+
+func TestMapMinimumACRValue_EmptyWhenParamNameNotPresent(t *testing.T) {
+	cfg := &PingFederateClientConfig{
+		ExtendedParameters:       map[string]ExtendedParameterValue{"enforce_2sv": {Value: []string{"some-value"}}},
+		minimumAcrValueParamName: "custom_2sv_param",
+	}
+	if got := cfg.mapMinimumACRValue(); got != "" {
+		t.Errorf("mapMinimumACRValue() = %q, want empty string", got)
+	}
+}

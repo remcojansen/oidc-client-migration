@@ -81,3 +81,9 @@ variable "pingfederate_access_token_manager_mapping" {
   type        = map(map(string))
   default     = {}
 }
+
+variable "pingfederate_minimum_acr_value_param_name" {
+  description = "PingFederate Extended Parameter name storing extensions.minimum_acr_value. PingFederate has no native concept for this; it is an arbitrary, deployment-chosen Extended Parameter."
+  type        = string
+  default     = "minimum_acr_value"
+}

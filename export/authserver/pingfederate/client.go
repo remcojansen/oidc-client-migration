@@ -16,6 +16,7 @@ type PingFederateClient struct {
 	client                    *http.Client
 	header                    *http.Header
 	accessTokenManagerMapping map[string]AccessTokenManagerInfo
+	minimumAcrValueParamName  string
 }
 
 func CreatePingFederateClient() *PingFederateClient {
@@ -28,7 +29,8 @@ func CreatePingFederateClient() *PingFederateClient {
 			},
 			Timeout: 10 * time.Second,
 		},
-		header: &http.Header{},
+		header:                   &http.Header{},
+		minimumAcrValueParamName: "minimum_acr_value",
 	}
 	c.header.Set("X-XSRF-Header", "PingFederate")
 	c.header.Set("Accept", "application/json")
@@ -41,6 +43,14 @@ func CreatePingFederateClient() *PingFederateClient {
 // called first in the builder chain, before any other With... call.
 func (c *PingFederateClient) WithAccessTokenManagerMapping(mapping map[string]AccessTokenManagerInfo) *PingFederateClient {
 	c.accessTokenManagerMapping = mapping
+	return c
+}
+
+// WithMinimumAcrValueParamName must be called first in the builder chain.
+func (c *PingFederateClient) WithMinimumAcrValueParamName(name string) *PingFederateClient {
+	if name != "" {
+		c.minimumAcrValueParamName = name
+	}
 	return c
 }
 
@@ -97,6 +107,7 @@ func (c *PingFederateClient) FetchClientConfigurations() ([]authserver.OAuthClie
 	oauthClients := make([]authserver.OAuthClientConfig, len(clientList.Items))
 	for i := range clientList.Items {
 		clientList.Items[i].accessTokenManagerMapping = c.accessTokenManagerMapping
+		clientList.Items[i].minimumAcrValueParamName = c.minimumAcrValueParamName
 		oauthClients[i] = &clientList.Items[i]
 	}
 
@@ -131,6 +142,7 @@ func (c *PingFederateClient) FetchClientConfigurationByClientId(clientId string)
 		return nil, err
 	}
 	client.accessTokenManagerMapping = c.accessTokenManagerMapping
+	client.minimumAcrValueParamName = c.minimumAcrValueParamName
 
 	return &client, nil
 }

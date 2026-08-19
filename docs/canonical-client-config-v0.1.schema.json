@@ -275,11 +275,6 @@
                     "type": "string",
                     "description": "Minimum ACR values enforced by the authorization server."
                 },
-                "terms_and_conditions_required": {
-                    "type": "boolean",
-                    "description": "Whether users must approve terms and conditions during consent.",
-                    "default": true
-                },
                 "introspection_enabled": {
                     "type": "boolean",
                     "description": "Whether the client is authorized to call the authorization server's token introspection endpoint (RFC 7662) to validate tokens.",

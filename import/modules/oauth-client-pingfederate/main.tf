@@ -93,12 +93,11 @@ locals {
   scopes = try(local.client.scopes, [])
 
   # Normalize nullable booleans for use in conditions/provider boolean fields.
-  enabled                       = try(local.extensions.enabled, null) != false
-  consent_required              = try(local.client.consent_required, null) != false
-  pkce_required                 = try(local.extensions.pkce_required, null) != false
-  dpop_required                 = try(local.extensions.dpop_required, null) == true
-  par_required                  = try(local.extensions.par_required, null) == true
-  terms_and_conditions_required = try(local.extensions.terms_and_conditions_required, null) != false
+  enabled          = try(local.extensions.enabled, null) != false
+  consent_required = try(local.client.consent_required, null) != false
+  pkce_required    = try(local.extensions.pkce_required, null) != false
+  dpop_required    = try(local.extensions.dpop_required, null) == true
+  par_required     = try(local.extensions.par_required, null) == true
 }
 
 resource "pingfederate_oauth_client" "this" {
@@ -146,8 +145,7 @@ resource "pingfederate_oauth_client" "this" {
   exclusive_scopes = local.scopes
 
   extended_parameters = {
-    exclude_tnc = { values = [local.terms_and_conditions_required ? "false" : "true"] }
-    enforce_2sv = { values = [try(local.extensions.minimum_acr_value, "")] }
+    (var.minimum_acr_value_param_name) = { values = [try(local.extensions.minimum_acr_value, "")] }
   }
 
 

@@ -11,6 +11,7 @@ module "pingfederate-client" {
 
   config                       = each.value
   access_token_manager_mapping = var.pingfederate_access_token_manager_mapping
+  minimum_acr_value_param_name = var.pingfederate_minimum_acr_value_param_name
 }
 
 module "keycloak-client" {

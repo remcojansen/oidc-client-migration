@@ -39,7 +39,6 @@ locals {
   consent_required = try(local.client.consent_required, null) != false
   par_required     = try(local.extensions.par_required, null) == true
   dpop_required    = try(local.extensions.dpop_required, null) == true
-  require_tnc      = try(local.extensions.terms_and_conditions_required, null) != false
   pkce_required    = try(local.extensions.pkce_required, null) != false
 
   # Normalize nullable strings used in extra_config and URL toggles.
@@ -78,7 +77,6 @@ locals {
     {
       "par.required"                    = tostring(local.par_required)
       "dpop.required"                   = tostring(local.dpop_required)
-      "require-tnc"                     = tostring(local.require_tnc)
       "id.token.signed.response.alg"    = try(local.client.id_token_signed_response_alg, "")
       "token.endpoint.auth.signing.alg" = try(local.client.token_endpoint_auth_signing_alg, "")
       "request.object.signature.alg"    = try(local.client.request_object_signing_alg, "")
