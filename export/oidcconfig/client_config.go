@@ -9,18 +9,18 @@ import (
 )
 
 type CanonicalClientConfig struct {
-	Metadata   CanonicalClientConfigMetadata   `json:"metadata,omitempty" yaml:"metadata,omitempty"`
-	Client     CanonicalClientConfigClient     `json:"client" yaml:"client"`
-	Extensions CanonicalClientConfigExtensions `json:"extensions,omitempty" yaml:"extensions,omitempty"`
-	Secrets    CanonicalClientConfigSecrets    `json:"secrets,omitempty" yaml:"secrets,omitempty"`
+	Annotations CanonicalClientConfigAnnotations `json:"annotations,omitempty" yaml:"annotations,omitempty"`
+	Client      CanonicalClientConfigClient      `json:"client" yaml:"client"`
+	Extensions  CanonicalClientConfigExtensions  `json:"extensions,omitempty" yaml:"extensions,omitempty"`
+	Secrets     CanonicalClientConfigSecrets     `json:"secrets,omitempty" yaml:"secrets,omitempty"`
 }
 
-type CanonicalClientConfigMetadata struct {
-	// Metadata fields for tracking client configuration source, owner, etc.
-	OwnerEmail        string `json:"owner_email,omitempty" yaml:"owner_email,omitempty"`
-	OwnerTeam         string `json:"owner_team,omitempty" yaml:"owner_team,omitempty"`
-	OwnerSlackChannel string `json:"owner_slack_channel,omitempty" yaml:"owner_slack_channel,omitempty"`
-	OwnerTeamADGroup  string `json:"owner_team_ad_group,omitempty" yaml:"owner_team_ad_group,omitempty"`
+type CanonicalClientConfigAnnotations struct {
+	// Out-of-band ownership annotations; not provisioned to the authorization server.
+	OwnerEmail         string `json:"owner_email,omitempty" yaml:"owner_email,omitempty"`
+	OwnerTeam          string `json:"owner_team,omitempty" yaml:"owner_team,omitempty"`
+	OwnerChannel       string `json:"owner_channel,omitempty" yaml:"owner_channel,omitempty"`
+	OwnerSecurityGroup string `json:"owner_security_group,omitempty" yaml:"owner_security_group,omitempty"`
 }
 
 type CanonicalClientConfigClient struct {

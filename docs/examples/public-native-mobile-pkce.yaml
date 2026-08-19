@@ -1,9 +1,9 @@
 # Native mobile app (iOS/Android) using the authorization code flow with PKCE.
 # Public client: no client secret, PKCE is mandatory since the app cannot keep a secret.
-metadata:
+annotations:
   owner_email: mobile-team@example.com
-  owner_slack_channel: "#mobile-platform"
-  owner_team_ad_group: ad-grp-mobile-platform
+  owner_channel: "#mobile-platform"
+  owner_security_group: ad-grp-mobile-platform
 
 client:
   client_id: com.example.mobileapp

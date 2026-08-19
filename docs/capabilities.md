@@ -15,11 +15,10 @@ implementation if this table and the code ever disagree.
 | ~ | Partial / approximate — supported, but via a heuristic, a lossy mapping, or only a subset of the field's range. See the note. |
 | ❌ | Unsupported — no equivalent exists in this system/direction; the field is dropped (export) or ignored (import). |
 
-## `metadata`
+## `annotations`
 
-All `metadata.*` fields (`owner_email`, `owner_slack_channel`, `owner_team_ad_group`) are
-out-of-band in v0.1: neither exported from a source system nor provisioned to a target system.
-They only round-trip through canonical files if set by hand.
+All `annotations.*` fields are out-of-band: neither exported from a source system nor
+provisioned to a target system. They only round-trip through canonical files if set by hand.
 
 ## `client`
 

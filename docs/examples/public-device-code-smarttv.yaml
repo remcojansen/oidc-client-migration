@@ -1,9 +1,9 @@
 # Smart-TV / limited-input device using the device authorization grant (device code flow).
 # Public client since the device cannot securely store a secret; PKCE does not apply to
 # this flow, but consent is still required before tokens are issued.
-metadata:
+annotations:
   owner_email: living-room-apps@example.com
-  owner_slack_channel: "#living-room-apps"
+  owner_channel: "#living-room-apps"
 
 client:
   client_id: smarttv-streaming-app

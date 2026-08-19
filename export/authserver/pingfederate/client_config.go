@@ -118,7 +118,7 @@ func (cc *PingFederateClientConfig) ToJSON() ([]byte, error) {
 
 func (c *PingFederateClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalClientConfig {
 	return &oidcconfig.CanonicalClientConfig{
-		Metadata: oidcconfig.CanonicalClientConfigMetadata{
+		Annotations: oidcconfig.CanonicalClientConfigAnnotations{
 			// Not provided by PingFederate API
 		},
 		Client: oidcconfig.CanonicalClientConfigClient{

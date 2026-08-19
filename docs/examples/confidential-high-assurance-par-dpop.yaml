@@ -3,10 +3,10 @@
 # minimum step-up authentication level (ACR). Demonstrates the less common registration
 # fields: sector_identifier_uri, initiate_login_uri, request_uris, default/minimum ACR
 # values, and backchannel logout.
-metadata:
+annotations:
   owner_email: open-banking@example.com
-  owner_slack_channel: "#open-banking-platform"
-  owner_team_ad_group: ad-grp-open-banking
+  owner_channel: "#open-banking-platform"
+  owner_security_group: ad-grp-open-banking
 
 client:
   client_id: openbanking-tpp-gateway

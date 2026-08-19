@@ -2,9 +2,9 @@
 # token (RFC 8693 token exchange), authenticating with client_secret_jwt. Uses opaque
 # access tokens since downstream services validate them via introspection rather than
 # local JWT verification.
-metadata:
+annotations:
   owner_email: api-gateway-team@example.com
-  owner_slack_channel: "#api-gateway"
+  owner_channel: "#api-gateway"
 
 client:
   client_id: internal-api-gateway

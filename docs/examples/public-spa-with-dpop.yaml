@@ -1,9 +1,9 @@
 # Public single-page browser app secured with sender-constrained (DPoP) tokens instead of
 # relying solely on PKCE + short-lived tokens. Useful where refresh tokens must be bound
 # to the browser instance to reduce the impact of token exfiltration (e.g. via XSS).
-metadata:
+annotations:
   owner_email: web-platform@example.com
-  owner_slack_channel: "#web-platform"
+  owner_channel: "#web-platform"
 
 client:
   client_id: spa-dpop-dashboard
