@@ -63,7 +63,7 @@ func (cc *KeycloakClientConfig) ToJSON() ([]byte, error) {
 
 func (c *KeycloakClientConfig) GetCanonicalClientConfig() *oidcconfig.CanonicalClientConfig {
 	return &oidcconfig.CanonicalClientConfig{
-		Metadata: oidcconfig.CanonicalClientConfigMetadata{
+		Annotations: oidcconfig.CanonicalClientConfigAnnotations{
 			// Not provided by Keycloak API
 		},
 		Client: oidcconfig.CanonicalClientConfigClient{

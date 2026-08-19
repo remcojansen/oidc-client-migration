@@ -9,10 +9,10 @@
         "client"
     ],
     "properties": {
-        "metadata": {
+        "annotations": {
             "type": "object",
             "additionalProperties": false,
-            "description": "Optional ownership and source-tracking metadata. In v0.1 this block is out-of-band and is not provisioned by Terraform modules to target authorization servers.",
+            "description": "Optional ownership and source-tracking annotations. This block is out-of-band and is not provisioned by Terraform modules to target authorization servers.",
             "properties": {
                 "owner_email": {
                     "type": "string",
@@ -22,13 +22,13 @@
                     "type": "string",
                     "description": "Human-readable name of the owning team or stakeholder."
                 },
-                "owner_slack_channel": {
+                "owner_channel": {
                     "type": "string",
-                    "description": "Slack channel used for operational ownership."
+                    "description": "Chat channel used for operational ownership."
                 },
-                "owner_team_ad_group": {
+                "owner_security_group": {
                     "type": "string",
-                    "description": "Directory group name representing the owning team."
+                    "description": "Directory security group representing the owning team."
                 }
             }
         },

@@ -1,9 +1,9 @@
 # Legacy confidential web client kept disabled pending decommission. Demonstrates
 # `extensions.enabled: false` and the `client_secret_post` auth method, plus the
 # (insecure) plain_secret field for a low-value, already-scheduled-for-retirement client.
-metadata:
+annotations:
   owner_email: legacy-systems@example.com
-  owner_slack_channel: "#legacy-decommissioning"
+  owner_channel: "#legacy-decommissioning"
 
 client:
   client_id: legacy-intranet-app

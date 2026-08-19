@@ -1,10 +1,10 @@
 # Traditional server-rendered confidential web application. The secret is held server-side,
 # so client_secret_basic is an acceptable authentication method. Demonstrates most of the
 # standard OIDC registration metadata for a "full featured" web app.
-metadata:
+annotations:
   owner_email: portal-team@example.com
-  owner_slack_channel: "#customer-portal"
-  owner_team_ad_group: ad-grp-customer-portal
+  owner_channel: "#customer-portal"
+  owner_security_group: ad-grp-customer-portal
 
 client:
   client_id: customer-portal-web

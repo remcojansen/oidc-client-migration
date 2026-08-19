@@ -1,9 +1,9 @@
 # Confidential client authenticating with private_key_jwt (asymmetric client assertions)
 # instead of a shared secret. The client publishes its public keys via jwks_uri so the
 # authorization server can validate signed client assertions and signed request objects.
-metadata:
+annotations:
   owner_email: partner-integrations@example.com
-  owner_slack_channel: "#partner-integrations"
+  owner_channel: "#partner-integrations"
 
 client:
   client_id: partner-api-integration

@@ -21,31 +21,31 @@ That means:
 
 - `client` contains the interoperable registration data.
 - `extensions` contains authorization-server policy knobs and implementation-specific settings.
-- `metadata` contains ownership and operational tracking data.
-  In v0.1, metadata is out-of-band and is not provisioned to target authorization servers.
+- `annotations` contains ownership and operational tracking data.
+  This block is out-of-band and is not provisioned to target authorization servers.
 - `secrets` contains sensitive material that should not be treated as ordinary configuration.
 
 ## Top-Level Structure
 
 | Field | Type | Required | Purpose |
 | --- | --- | --- | --- |
-| `metadata` | object | no | Ownership and source-tracking data. Out-of-band only in v0.1 (not provisioned). |
+| `annotations` | object | no | Ownership and source-tracking data. Out-of-band only (not provisioned). |
 | `client` | object | yes | Canonical client registration data. |
 | `extensions` | object | no | Server-specific policy and deployment settings. |
 | `secrets` | object | no | Sensitive credentials or encrypted secret material. |
 
 ## Field Reference
 
-### metadata
+### annotations
 
-Metadata is out-of-band in v0.1. It is retained in canonical files for ownership and governance, but current Terraform modules do not apply metadata to provider resources.
+Annotations are out-of-band. They are retained in canonical files for ownership and governance, but current Terraform modules do not apply annotations to provider resources.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `owner_email` | string | Human owner contact address. |
 | `owner_team` | string | Human-readable name of the owning team or stakeholder. |
-| `owner_slack_channel` | string | Operational contact channel. |
-| `owner_team_ad_group` | string | Owning team directory group. |
+| `owner_channel` | string | Operational contact channel. |
+| `owner_security_group` | string | Owning team directory security group. |
 
 ### client
 
@@ -152,7 +152,7 @@ This is a project-level convention used to normalize source authorization-server
 
 The following fields are project-specific and should be treated as extensions:
 
-- `metadata.*`
+- `annotations.*`
 - `extensions.*`
 - `secrets.encrypted_secret`
 
@@ -170,9 +170,9 @@ Recommended validation rules for the canonical model:
 
 ```json
 {
-  "metadata": {
+  "annotations": {
     "owner_email": "team@example.com",
-    "owner_team_ad_group": "ad-group-example"
+    "owner_security_group": "ad-group-example"
   },
   "client": {
     "client_id": "example-client",
